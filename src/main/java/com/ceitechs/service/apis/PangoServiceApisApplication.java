@@ -22,30 +22,3 @@ public class PangoServiceApisApplication {
 	}
 }
 
-@Getter
-@Setter
-class Rental {
-
-    private Long id;
-    private String reservationName;
-
-    public Rental(String reservationName) {
-        this.reservationName = reservationName;
-        this.id = System.currentTimeMillis();
-    }
-}
-
-@RefreshScope
-@RestController
-class ReservationRestController{
-
-	@Value("${pango.tagline}")
-	private String tagline;
-
-	@RequestMapping(value = "/rentals", method = RequestMethod.GET)
-    Collection<Rental> getRentals(){
-		return Arrays.asList(tagline.split(",")).stream().map(Rental::new).collect(Collectors.toList());
-
-	}
-
-}
