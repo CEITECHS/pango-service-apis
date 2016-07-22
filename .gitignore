@@ -62,3 +62,6 @@ hs_err_pid*
 /mvnw.cmd
 /mvnw
 /pango-service-apis.iml
+src/main/resources/static/
+src/main/resources/templates/
+target/
