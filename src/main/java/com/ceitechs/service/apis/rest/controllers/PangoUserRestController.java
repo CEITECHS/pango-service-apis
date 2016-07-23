@@ -17,7 +17,7 @@ import com.ceitechs.service.apis.rest.resources.PangoServiceResponse;
 import com.ceitechs.service.apis.rest.resources.models.UserRequest;
 
 @RestController
-public class UserRestController {
+public class PangoUserRestController {
 
     /**
      * This endpoint will create a new Pango user, an email with verification link will be sent to the registered email
@@ -29,7 +29,7 @@ public class UserRestController {
     public ResponseEntity<?> createUser(@Valid @RequestBody UserRequest userRequest) {
         PangoServiceResponse response = new PangoServiceResponse();
         response.setDeveloperText("Ok, User registered, sent verification email");
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -39,8 +39,10 @@ public class UserRestController {
      * @return
      */
     @RequestMapping(value = "/users/{userReferenceId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@PathVariable String userReferenceId) {
-        return null;
+    public ResponseEntity<?> updateUser(@Valid @PathVariable String userReferenceId) {
+        PangoServiceResponse response = new PangoServiceResponse();
+        response.setDeveloperText("Ok, User updated");
+        return ResponseEntity.ok(response);
     }
 
     /**
