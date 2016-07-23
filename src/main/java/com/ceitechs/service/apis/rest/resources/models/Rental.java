@@ -1,4 +1,4 @@
-package com.ceitechs.service.apis.rest.resources.Models;
+package com.ceitechs.service.apis.rest.resources.models;
 
 import lombok.Getter;
 import lombok.Setter;

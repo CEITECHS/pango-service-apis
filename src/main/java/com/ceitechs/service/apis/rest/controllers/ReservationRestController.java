@@ -1,12 +1,13 @@
 package com.ceitechs.service.apis.rest.controllers;
 
 
-import com.ceitechs.service.apis.rest.resources.Models.Rental;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.ceitechs.service.apis.rest.resources.models.Rental;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @RestController
 public class ReservationRestController{
 
-	@Value("${pango.tagline}")
+	@Value("${pango.tagline:1,test}")
 	private String tagline;
 
 	@RequestMapping(value = "/rentals", method = RequestMethod.GET)
@@ -27,5 +28,4 @@ public class ReservationRestController{
 		return Arrays.asList(tagline.split(",")).stream().map(Rental::new).collect(Collectors.toList());
 
 	}
-
 }
