@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  */
 @RefreshScope
 @RestController
-public class ReservationRestController{
+public class PangoRentalRestController{
 
 	@Value("${pango.tagline:1,test}")
 	private String tagline;
