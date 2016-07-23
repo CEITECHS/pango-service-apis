@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.ceitechs.service.apis.exception.FileUploadException;
 import com.ceitechs.service.apis.exception.UserAlreadyExistsException;
-import com.ceitechs.service.apis.rest.resources.ErrorResponse;
-import com.ceitechs.service.apis.rest.resources.ValidationError;
+import com.ceitechs.service.apis.rest.resources.PangoErrorResponse;
+import com.ceitechs.service.apis.rest.resources.PangoValidationError;
 
 /**
  * 
@@ -30,7 +30,7 @@ public class PangoServiceApisHandler {
      */
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<?> handleUserAlreadyExists(UserAlreadyExistsException uaee) {
-        ErrorResponse errorResponse = new ErrorResponse();
+        PangoErrorResponse errorResponse = new PangoErrorResponse();
         errorResponse.setTitle("User Already Exists.");
         errorResponse.setTimeStamp((new Date()).getTime());
         errorResponse.setStatus(HttpStatus.CONFLICT.value());
@@ -46,7 +46,7 @@ public class PangoServiceApisHandler {
      */
     @ExceptionHandler(FileUploadException.class)
     public ResponseEntity<?> handleFileUploadException(FileUploadException fue) {
-        ErrorResponse errorResponse = new ErrorResponse();
+        PangoErrorResponse errorResponse = new PangoErrorResponse();
         errorResponse.setTitle("Error while uploading the picture");
         errorResponse.setTimeStamp((new Date()).getTime());
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -62,7 +62,7 @@ public class PangoServiceApisHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleInputValidationError(MethodArgumentNotValidException manve) {
-        ErrorResponse errorResponse = new ErrorResponse();
+        PangoErrorResponse errorResponse = new PangoErrorResponse();
         errorResponse.setTitle("Input request validation failed.");
         errorResponse.setTimeStamp((new Date()).getTime());
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -70,12 +70,12 @@ public class PangoServiceApisHandler {
         errorResponse.setDeveloperMessage("Input request validation failed.");
         List<FieldError> fieldErrors = manve.getBindingResult().getFieldErrors();
         for (FieldError fieldError : fieldErrors) {
-            List<ValidationError> validationErrorList = errorResponse.getErrors().get(fieldError.getField());
+            List<PangoValidationError> validationErrorList = errorResponse.getErrors().get(fieldError.getField());
             if (validationErrorList == null) {
-                validationErrorList = new ArrayList<ValidationError>();
+                validationErrorList = new ArrayList<PangoValidationError>();
                 errorResponse.getErrors().put(fieldError.getField(), validationErrorList);
             }
-            ValidationError validationError = new ValidationError();
+            PangoValidationError validationError = new PangoValidationError();
             validationError.setErrorCode(fieldError.getCode());
             validationError.setErrorMessage(fieldError.getDefaultMessage());
             validationErrorList.add(validationError);

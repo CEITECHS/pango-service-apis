@@ -1,5 +1,10 @@
 package com.ceitechs.service.apis.rest.controllers;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -12,9 +17,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ceitechs.domain.service.domain.UserPreference.PreferenceCategory;
+import com.ceitechs.domain.service.domain.UserPreference.PreferenceType;
+import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.exception.FileUploadException;
 import com.ceitechs.service.apis.rest.resources.PangoServiceResponse;
+import com.ceitechs.service.apis.rest.resources.UserPreferenceResponse;
+import com.ceitechs.service.apis.rest.resources.models.UserPreference;
+import com.ceitechs.service.apis.rest.resources.models.UserProfile;
 import com.ceitechs.service.apis.rest.resources.models.UserRequest;
+import com.ceitechs.service.apis.rest.resources.models.UserSearchHistory;
 
 @RestController
 public class PangoUserRestController {
@@ -77,8 +89,11 @@ public class PangoUserRestController {
      * @return
      */
     @RequestMapping(value = "/users/{userReferenceId}/profile", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUserProfile(@PathVariable String userReferenceId) {
-        return null;
+    public ResponseEntity<?> updateUserProfile(@PathVariable String userReferenceId,
+            @Valid @RequestBody UserProfile userProfile) {
+        PangoServiceResponse response = new PangoServiceResponse();
+        response.setDeveloperText("Ok, User updated");
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -88,8 +103,11 @@ public class PangoUserRestController {
      * @return
      */
     @RequestMapping(value = "/users/{userReferenceId}/preferences", method = RequestMethod.POST)
-    public ResponseEntity<?> createUserPreference(@PathVariable String userReferenceId) {
-        return null;
+    public ResponseEntity<?> createUserPreference(@PathVariable String userReferenceId,
+            @Valid @RequestBody UserPreference userPreference) {
+        PangoServiceResponse response = new PangoServiceResponse();
+        response.setDeveloperText("Ok, successfully created a new user preference");
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -100,7 +118,36 @@ public class PangoUserRestController {
      */
     @RequestMapping(value = "/users/{userReferenceId}/preferences", method = RequestMethod.GET)
     public ResponseEntity<?> getUserPreferences(@PathVariable String userReferenceId) {
-        return null;
+        UserPreferenceResponse response = new UserPreferenceResponse();
+        response.setDeveloperText("Ok, successfully retrieved all the preferences");
+        IntStream.range(0, 5).forEach(i -> {
+            UserPreference userPreference = new UserPreference();
+            userPreference.setPreferenceId(PangoUtility.generateIdAsString());
+            userPreference.setPreferenceType(PreferenceType.Notification.name());
+            userPreference.setCategory(PreferenceCategory.SEARCH.name());
+            if (i % 2 == 0) {
+                userPreference.setSendNotification(true);
+                userPreference.setActive(true);
+            } else {
+                userPreference.setSendNotification(false);
+                userPreference.setActive(false);
+            }
+            userPreference.setFromDate(LocalDate.now().toString());
+            userPreference.setToDate(LocalDate.now().plusMonths(6).toString());
+            
+            // Create a new User Search History
+            UserSearchHistory userSearchHistory = new UserSearchHistory();
+            userPreference.setUserSearchHistory(userSearchHistory);
+
+            if (response.getUserPreferences() == null) {
+                List<UserPreference> userPreferenceList = new ArrayList<>();
+                userPreferenceList.add(userPreference);
+                response.setUserPreferences(userPreferenceList);
+            } else {
+                response.getUserPreferences().add(userPreference);
+            }
+        });
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -112,7 +159,9 @@ public class PangoUserRestController {
      */
     @RequestMapping(value = "/users/{userReferenceId}/preferences/{preferenceId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserPreference(@PathVariable String userReferenceId,
-            @PathVariable String preferenceId) {
-        return null;
+            @PathVariable String preferenceId, @Valid @RequestBody UserPreference userPreference) {
+        PangoServiceResponse response = new PangoServiceResponse();
+        response.setDeveloperText("Ok, successfully updated the preference");
+        return ResponseEntity.ok(response);
     }
 }

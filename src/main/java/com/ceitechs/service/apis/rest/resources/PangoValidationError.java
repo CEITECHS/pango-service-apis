@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ValidationError {
+public class PangoValidationError {
 
     private String errorCode;
 

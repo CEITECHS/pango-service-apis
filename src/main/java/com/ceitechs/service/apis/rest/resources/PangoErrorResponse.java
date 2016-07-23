@@ -15,7 +15,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ErrorResponse {
+public class PangoErrorResponse {
 
     private String title;
 
@@ -27,5 +27,5 @@ public class ErrorResponse {
 
     private String developerMessage;
 
-    private Map<String, List<ValidationError>> errors = new HashMap<>();
+    private Map<String, List<PangoValidationError>> errors = new HashMap<>();
 }
