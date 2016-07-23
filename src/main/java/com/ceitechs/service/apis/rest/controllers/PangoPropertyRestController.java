@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,11 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ceitechs.service.apis.rest.resources.PangoServiceResponse;
+import com.ceitechs.service.apis.rest.resources.PropertyDetailResource;
 import com.ceitechs.service.apis.rest.resources.PropertyResource;
-import com.ceitechs.service.apis.rest.resources.PropertyResponse;
-import com.ceitechs.service.apis.rest.resources.UserRentRequest;
-import com.ceitechs.service.apis.rest.resources.models.PropertyUnit;
+import com.ceitechs.service.apis.rest.resources.PropertySearchCriteriaResource;
+import com.ceitechs.service.apis.rest.resources.UserRentResource;
 
 /**
  * 
@@ -48,14 +48,11 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties", method = RequestMethod.GET)
     public ResponseEntity<?> getProperties(@RequestHeader(required = false, value = "user-token") String userToken,
-            @RequestHeader(required = false) String userReferenceId, @RequestParam double latitude,
-            @RequestParam double longitude, @RequestParam int radius, @RequestParam String propertyPurpose,
-            @RequestParam String moveInDate, @RequestParam int roomsCount, @RequestParam int bedRoomsCount,
-            @RequestParam(defaultValue = "false") boolean selfContainedRooms) {
+            @RequestHeader(required = false) String userReferenceId,
+            @Valid @RequestBody PropertySearchCriteriaResource propertySearchCriteriaResource) {
         logger.info("getProperties : Request Params : " + userToken + " : " + userReferenceId);
-        PropertyResponse response = new PropertyResponse();
-        response.setDeveloperText("List of properties matching the search criteria : ");
-        return ResponseEntity.ok(response);
+        // TODO : Return a list of Property
+        return ResponseEntity.ok("List of properties matching the search criteria : ");
     }
 
     /**
@@ -68,10 +65,8 @@ public class PangoPropertyRestController {
     @RequestMapping(value = "/properties", method = RequestMethod.POST)
     public ResponseEntity<?> createProperty(@RequestHeader(value = "user-token") String userToken,
             @RequestHeader String userReferenceId, @Valid @RequestBody PropertyResource propertyResource) {
-        logger.info("getProperties : Request Params : " + userToken + " : " + userReferenceId);
-        PangoServiceResponse response = new PangoServiceResponse();
-        response.setDeveloperText("Ok, successfully created a new Property");
-        return ResponseEntity.ok(response);
+        logger.info("createProperty : Request Params : " + userToken + " : " + userReferenceId);
+        return new ResponseEntity<>("Ok, successfully created a new Property", HttpStatus.CREATED);
     }
 
     /**
@@ -88,9 +83,9 @@ public class PangoPropertyRestController {
             @RequestHeader String userReferenceId, @RequestParam String status) {
         logger.info(
                 "getUserPropertiesByStatus : Request Params : " + userToken + " : " + userReferenceId + " : " + status);
-        PropertyResponse response = new PropertyResponse();
-        response.setDeveloperText("List of Pango rental units assigned to the user filtered as per the status");
-        return ResponseEntity.ok(response);
+        PropertyResource resource = new PropertyResource();
+        // TODO: Return a list of Property
+        return ResponseEntity.ok(resource);
     }
 
     /**
@@ -108,10 +103,9 @@ public class PangoPropertyRestController {
             @RequestHeader String userReferenceId, @RequestParam String referenceId, @RequestParam String by) {
         logger.info("getPendingPropertiesList : Request Params : " + userToken + " : " + userReferenceId + " : "
                 + referenceId + " : " + by);
-        PropertyResponse response = new PropertyResponse();
-        response.setDeveloperText(
-                "List of un-verified Pango rental units by an owner or coodinator filtered as per the query parameters");
-        return ResponseEntity.ok(response);
+        PropertyResource resource = new PropertyResource();
+        // TODO: Return a list of Property
+        return ResponseEntity.ok(resource);
     }
 
     /**
@@ -126,9 +120,8 @@ public class PangoPropertyRestController {
     public ResponseEntity<?> getPropertyUnit(@RequestHeader(value = "user-token") String userToken,
             @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId) {
         logger.info("getPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
-        PropertyResponse response = new PropertyResponse();
-        response.setDeveloperText("Detailed information of the property");
-        return ResponseEntity.ok(response);
+        PropertyDetailResource propertyDetailResource = new PropertyDetailResource();
+        return ResponseEntity.ok(propertyDetailResource);
     }
 
     /**
@@ -143,12 +136,10 @@ public class PangoPropertyRestController {
     @RequestMapping(value = "/properties/{propertyReferenceId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updatePropertyUnit(@RequestHeader(value = "user-token") String userToken,
             @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId,
-            @Valid @RequestBody PropertyUnit propertyUnit) {
+            @Valid @RequestBody PropertyDetailResource propertyDetailResource) {
         logger.info(
                 "updatePropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
-        PangoServiceResponse response = new PangoServiceResponse();
-        response.setDeveloperText("Ok, property updated successfully");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok("Ok, property updated successfully");
     }
 
     /**
@@ -163,12 +154,10 @@ public class PangoPropertyRestController {
     @RequestMapping(value = "/properties/{propertyReferenceId}/rent", method = RequestMethod.PUT)
     public ResponseEntity<?> rentPropertyUnit(@RequestHeader(value = "user-token") String userToken,
             @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId,
-            @Valid @RequestBody UserRentRequest userRentRequest) {
+            @Valid @RequestBody UserRentResource userRentResource) {
         logger.info("rentPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId
-                + " : " + userRentRequest);
-        PangoServiceResponse response = new PangoServiceResponse();
-        response.setDeveloperText("Ok, the Pango rental unit has been updated successfully with the rental details");
-        return ResponseEntity.ok(response);
+                + " : " + userRentResource);
+        return ResponseEntity.ok("Ok, the Pango rental unit has been updated successfully with the rental details");
     }
 
     /**
@@ -188,12 +177,9 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties/{propertyReferenceId}/hold", method = RequestMethod.PUT)
     public ResponseEntity<?> holdPropertyUnit(@RequestHeader(value = "user-token") String userToken,
-            @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId,
-            @RequestParam String startDate, @RequestParam String endDate) {
-        logger.info("holdPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId
-                + " : " + startDate + " : " + endDate);
-        PangoServiceResponse response = new PangoServiceResponse();
-        response.setDeveloperText("Ok, the Pango rental unit has been updated successfully with the holding details");
-        return ResponseEntity.ok(response);
+            @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId) {
+        logger.info(
+                "holdPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
+        return ResponseEntity.ok("Ok, the Pango rental unit has been updated successfully with the holding details");
     }
 }

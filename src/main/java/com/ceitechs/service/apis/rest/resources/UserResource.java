@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
 
+import com.ceitechs.domain.service.domain.Address;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,7 +21,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserRequest {
+public class UserResource {
 
     @JsonProperty("firstName")
     @NotNull
@@ -43,26 +44,7 @@ public class UserRequest {
     @Email
     private String emailAddress;
 
-    @JsonProperty("addressLine1")
+    @JsonProperty("address")
     @NotNull
-    private String addressLine1;
-
-    @JsonProperty("addressLine2")
-    private String addressLine2;
-
-    @JsonProperty("city")
-    @NotNull
-    private String city;
-
-    @JsonProperty("state")
-    @NotNull
-    private String state;
-
-    @JsonProperty("zip")
-    @NotNull
-    private String zip;
-
-    @JsonProperty("country")
-    @NotNull
-    private String country;
+    private Address address;
 }

@@ -4,7 +4,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
 
-import com.ceitechs.service.apis.rest.resources.models.Address;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,21 +19,15 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class UserRentRequest {
-
-    @NotNull
-    private String startDate;
-
-    @NotNull
-    private String endDate;
-
-    @NotNull
-    private String phoneNumber;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class LoginResource {
 
     @NotNull
     @Email
+    @JsonProperty("userName")
     private String emailAddress;
 
     @NotNull
-    private Address address;
+    @JsonProperty("password")
+    private String password;
 }

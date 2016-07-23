@@ -1,11 +1,10 @@
-package com.ceitechs.service.apis.rest.resources.models;
+package com.ceitechs.service.apis.rest.resources;
 
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ceitechs.domain.service.domain.Address;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,15 +18,21 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Login {
+public class UserRentResource {
+
+    @NotNull
+    private String startDate;
+
+    @NotNull
+    private String endDate;
+
+    @NotNull
+    private String phoneNumber;
 
     @NotNull
     @Email
-    @JsonProperty("userName")
     private String emailAddress;
 
     @NotNull
-    @JsonProperty("password")
-    private String password;
+    private Address address;
 }

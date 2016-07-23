@@ -14,8 +14,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserProfileRequest {
+public class UserProfileResource {
 
     @JsonProperty(value = "password")
     private String password;
+
+    @JsonProperty(value = "profilePic")
+    private String profilePic;
 }

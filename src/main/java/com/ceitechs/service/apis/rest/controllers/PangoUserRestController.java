@@ -17,22 +17,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.ceitechs.domain.service.domain.UserPreference;
+import com.ceitechs.domain.service.domain.UserPreference.PreferenceCategory;
+import com.ceitechs.domain.service.domain.UserPreference.PreferenceType;
+import com.ceitechs.domain.service.domain.UserSearchHistory;
 import com.ceitechs.domain.service.util.PangoUtility;
-import com.ceitechs.service.apis.exception.FileUploadException;
-import com.ceitechs.service.apis.rest.resources.PangoServiceResponse;
-import com.ceitechs.service.apis.rest.resources.UserPreferenceRequest;
-import com.ceitechs.service.apis.rest.resources.UserPreferenceResponse;
-import com.ceitechs.service.apis.rest.resources.UserProfileRequest;
-import com.ceitechs.service.apis.rest.resources.UserRequest;
-import com.ceitechs.service.apis.rest.resources.models.Login;
-import com.ceitechs.service.apis.rest.resources.models.UserPreference;
-import com.ceitechs.service.apis.rest.resources.models.UserPreference.PreferenceCategory;
-import com.ceitechs.service.apis.rest.resources.models.UserPreference.PreferenceType;
-import com.ceitechs.service.apis.rest.resources.models.UserSearchHistory;
+import com.ceitechs.service.apis.rest.resources.LoginResource;
+import com.ceitechs.service.apis.rest.resources.UserPreferenceResource;
+import com.ceitechs.service.apis.rest.resources.UserProfileResource;
+import com.ceitechs.service.apis.rest.resources.UserResource;
 
 /**
  * 
@@ -51,11 +46,9 @@ public class PangoUserRestController {
      * @return
      */
     @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserRequest userRequest) {
-        logger.info("createUser : Request : " + userRequest);
-        PangoServiceResponse response = new PangoServiceResponse();
-        response.setDeveloperText("Ok, User registered, sent verification email");
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserResource userResource) {
+        logger.info("createUser : Request : " + userResource);
+        return new ResponseEntity<>("Ok, User registered, verification email sent", HttpStatus.CREATED);
     }
 
     /**
@@ -66,38 +59,9 @@ public class PangoUserRestController {
      */
     @RequestMapping(value = "/users/{userReferenceId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUser(@PathVariable String userReferenceId,
-            @Valid @RequestBody UserRequest userRequest) {
-        logger.info("updateUser : Request : " + userRequest);
-        PangoServiceResponse response = new PangoServiceResponse();
-        response.setDeveloperText("Ok, User updated");
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * This endpoint will upload the profile pic an existing Pango User
-     * 
-     * @param userReferenceId
-     * @return
-     */
-    @RequestMapping(value = "/users/{userReferenceId}/upload", method = RequestMethod.POST)
-    public ResponseEntity<?> uploadProfilePic(@PathVariable String userReferenceId,
-            @RequestParam("file") MultipartFile file) {
-        logger.info("uploadProfilePic : Input File Name : " + file.getOriginalFilename());
-        PangoServiceResponse response = new PangoServiceResponse();
-        String fileName = file.getOriginalFilename();
-        if (!file.isEmpty()) {
-            try {
-                byte[] bytes = file.getBytes();
-                logger.info("uploadProfilePic : bytes - " + bytes);
-                response.setDeveloperText("Profile pic uploaded successfully " + fileName);
-            } catch (Exception e) {
-                throw new FileUploadException("Error while uploading the profile pic : " + fileName, e.getCause());
-            }
-        } else {
-            throw new FileUploadException(
-                    "Error while uploading the profile pic : " + fileName + " because the file is empty.");
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
+            @Valid @RequestBody UserResource userResource) {
+        logger.info("updateUser : Request : " + userResource);
+        return ResponseEntity.ok("Ok, User updated");
     }
 
     /**
@@ -108,11 +72,9 @@ public class PangoUserRestController {
      */
     @RequestMapping(value = "/users/{userReferenceId}/profile", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserProfile(@PathVariable String userReferenceId,
-            @Valid @RequestBody UserProfileRequest userProfile) {
-        logger.info("uploadProfilePic : User Profile Request : " + userProfile);
-        PangoServiceResponse response = new PangoServiceResponse();
-        response.setDeveloperText("Ok, User updated");
-        return ResponseEntity.ok(response);
+            @Valid @RequestBody UserProfileResource userProfileResource) {
+        logger.info("updateUserProfile : User Profile Request : " + userProfileResource);
+        return ResponseEntity.ok("Ok, User profile updated");
     }
 
     /**
@@ -123,11 +85,9 @@ public class PangoUserRestController {
      */
     @RequestMapping(value = "/users/{userReferenceId}/preferences", method = RequestMethod.POST)
     public ResponseEntity<?> createUserPreference(@PathVariable String userReferenceId,
-            @Valid @RequestBody UserPreferenceRequest userPreference) {
-        logger.info("createUserPreference : User Preference Request : " + userPreference);
-        PangoServiceResponse response = new PangoServiceResponse();
-        response.setDeveloperText("Ok, successfully created a new user preference");
-        return ResponseEntity.ok(response);
+            @Valid @RequestBody UserPreferenceResource userPreferenceResource) {
+        logger.info("createUserPreference : User Preference Request : " + userPreferenceResource);
+        return new ResponseEntity<>("Ok, successfully created a new user preference", HttpStatus.CREATED);
     }
 
     /**
@@ -139,8 +99,7 @@ public class PangoUserRestController {
     @RequestMapping(value = "/users/{userReferenceId}/preferences", method = RequestMethod.GET)
     public ResponseEntity<?> getUserPreferences(@PathVariable String userReferenceId) {
         logger.info("getUserPreferences : User Reference Id : " + userReferenceId);
-        UserPreferenceResponse response = new UserPreferenceResponse();
-        response.setDeveloperText("Ok, successfully retrieved all the preferences");
+        List<UserPreference> userPrefenceList = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
             UserPreference userPreference = new UserPreference();
             userPreference.setPreferenceId(PangoUtility.generateIdAsString());
@@ -153,22 +112,16 @@ public class PangoUserRestController {
                 userPreference.setSendNotification(false);
                 userPreference.setActive(false);
             }
-            userPreference.setFromDate(LocalDate.now().toString());
-            userPreference.setToDate(LocalDate.now().plusMonths(6).toString());
+            userPreference.setFromDate(LocalDate.now());
+            userPreference.setToDate(LocalDate.now().plusMonths(6));
 
             // Create a new User Search History
             UserSearchHistory userSearchHistory = new UserSearchHistory();
             userPreference.setUserSearchHistory(userSearchHistory);
 
-            if (response.getUserPreferences() == null) {
-                List<UserPreference> userPreferenceList = new ArrayList<>();
-                userPreferenceList.add(userPreference);
-                response.setUserPreferences(userPreferenceList);
-            } else {
-                response.getUserPreferences().add(userPreference);
-            }
+            userPrefenceList.add(userPreference);
         });
-        return ResponseEntity.ok(response);
+        return new ResponseEntity<>(userPrefenceList, HttpStatus.OK);
     }
 
     /**
@@ -180,13 +133,11 @@ public class PangoUserRestController {
      */
     @RequestMapping(value = "/users/{userReferenceId}/preferences/{preferenceId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserPreference(@PathVariable String userReferenceId,
-            @PathVariable String preferenceId, @Valid @RequestBody UserPreferenceRequest userPreference) {
+            @PathVariable String preferenceId, @Valid @RequestBody UserPreferenceResource userPreferenceResource) {
         logger.info(
                 "updateUserPreference : User Reference Id : " + userReferenceId + " Preference Id : " + preferenceId);
-        logger.info("updateUserPreference : User Preference Request : " + userPreference);
-        PangoServiceResponse response = new PangoServiceResponse();
-        response.setDeveloperText("Ok, successfully updated the preference");
-        return ResponseEntity.ok(response);
+        logger.info("updateUserPreference : User Preference Request : " + userPreferenceResource);
+        return ResponseEntity.ok("Ok, successfully updated the preference");
     }
 
     /**
@@ -197,8 +148,8 @@ public class PangoUserRestController {
      * @return
      */
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> authenticate(@Valid @RequestBody Login login) {
-        logger.info("updateUserPreference : User Authentication Request : " + login);
+    public ResponseEntity<?> authenticate(@Valid @RequestBody LoginResource loginResource) {
+        logger.info("authenticate : User Authentication Request : " + loginResource);
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.set("access-token", PangoUtility.generateIdAsString());
         headers.set("userReferenceId", PangoUtility.generateIdAsString());
