@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserProfile {
+public class UserProfileRequest {
 
     @JsonProperty(value = "password")
     private String password;

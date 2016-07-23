@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserPreference {
+public class UserPreferenceRequest {
 
     @JsonProperty("preferenceId")
     private String preferenceId;
