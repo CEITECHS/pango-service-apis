@@ -2,7 +2,7 @@ package com.ceitechs.service.apis.rest.resources;
 
 import java.util.List;
 
-import com.ceitechs.service.apis.rest.resources.models.UserPreferenceRequest;
+import com.ceitechs.service.apis.rest.resources.models.UserPreference;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +18,5 @@ public class UserPreferenceResponse {
 
     private String developerText;
 
-    private List<UserPreferenceRequest> userPreferences;
+    private List<UserPreference> userPreferences;
 }

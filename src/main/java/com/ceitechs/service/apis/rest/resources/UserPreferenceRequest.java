@@ -1,5 +1,6 @@
-package com.ceitechs.service.apis.rest.resources.models;
+package com.ceitechs.service.apis.rest.resources;
 
+import com.ceitechs.service.apis.rest.resources.models.UserSearchHistory;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,9 +15,6 @@ import lombok.Setter;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserPreferenceRequest {
-
-    @JsonProperty("preferenceId")
-    private String preferenceId;
 
     @JsonProperty("preferenceType")
     private String preferenceType;

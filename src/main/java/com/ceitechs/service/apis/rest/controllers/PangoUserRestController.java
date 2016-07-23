@@ -19,17 +19,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ceitechs.domain.service.domain.UserPreference.PreferenceCategory;
-import com.ceitechs.domain.service.domain.UserPreference.PreferenceType;
 import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.exception.FileUploadException;
 import com.ceitechs.service.apis.rest.resources.PangoServiceResponse;
+import com.ceitechs.service.apis.rest.resources.UserPreferenceRequest;
 import com.ceitechs.service.apis.rest.resources.UserPreferenceResponse;
-import com.ceitechs.service.apis.rest.resources.models.UserPreferenceRequest;
-import com.ceitechs.service.apis.rest.resources.models.UserProfileRequest;
-import com.ceitechs.service.apis.rest.resources.models.UserRequest;
+import com.ceitechs.service.apis.rest.resources.UserProfileRequest;
+import com.ceitechs.service.apis.rest.resources.UserRequest;
+import com.ceitechs.service.apis.rest.resources.models.UserPreference;
+import com.ceitechs.service.apis.rest.resources.models.UserPreference.PreferenceCategory;
+import com.ceitechs.service.apis.rest.resources.models.UserPreference.PreferenceType;
 import com.ceitechs.service.apis.rest.resources.models.UserSearchHistory;
 
+/**
+ * 
+ * @author abhisheksingh -
+ * @since 1.0
+ */
 @RestController
 public class PangoUserRestController {
 
@@ -133,10 +139,10 @@ public class PangoUserRestController {
         UserPreferenceResponse response = new UserPreferenceResponse();
         response.setDeveloperText("Ok, successfully retrieved all the preferences");
         IntStream.range(0, 5).forEach(i -> {
-            UserPreferenceRequest userPreference = new UserPreferenceRequest();
+            UserPreference userPreference = new UserPreference();
             userPreference.setPreferenceId(PangoUtility.generateIdAsString());
-            userPreference.setPreferenceType(PreferenceType.Notification.name());
-            userPreference.setCategory(PreferenceCategory.SEARCH.name());
+            userPreference.setPreferenceType(PreferenceType.Notification);
+            userPreference.setCategory(PreferenceCategory.SEARCH);
             if (i % 2 == 0) {
                 userPreference.setSendNotification(true);
                 userPreference.setActive(true);
@@ -152,7 +158,7 @@ public class PangoUserRestController {
             userPreference.setUserSearchHistory(userSearchHistory);
 
             if (response.getUserPreferences() == null) {
-                List<UserPreferenceRequest> userPreferenceList = new ArrayList<>();
+                List<UserPreference> userPreferenceList = new ArrayList<>();
                 userPreferenceList.add(userPreference);
                 response.setUserPreferences(userPreferenceList);
             } else {

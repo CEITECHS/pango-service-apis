@@ -1,4 +1,4 @@
-package com.ceitechs.service.apis.rest.resources.models;
+package com.ceitechs.service.apis.rest.resources;
 
 import javax.validation.constraints.NotNull;
 
