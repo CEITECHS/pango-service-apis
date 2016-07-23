@@ -1,8 +1,11 @@
 package com.ceitechs.service.apis.rest.resources.models;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * 
@@ -12,16 +15,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
+@ToString
 public class Address {
+    @NotNull
     private String addressLine1;
 
     private String addressLine2;
 
+    @NotNull
     private String city;
 
-    private String State;
+    @NotNull
+    private String state;
 
+    @NotNull
     private String zip;
 
+    @NotNull
     private String country;
 }

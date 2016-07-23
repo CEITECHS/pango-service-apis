@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ceitechs.service.apis.rest.resources.PangoServiceResponse;
 import com.ceitechs.service.apis.rest.resources.PropertyResource;
 import com.ceitechs.service.apis.rest.resources.PropertyResponse;
+import com.ceitechs.service.apis.rest.resources.UserRentRequest;
 import com.ceitechs.service.apis.rest.resources.models.PropertyUnit;
 
 /**
@@ -142,11 +143,57 @@ public class PangoPropertyRestController {
     @RequestMapping(value = "/properties/{propertyReferenceId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updatePropertyUnit(@RequestHeader(value = "user-token") String userToken,
             @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId,
-            @RequestBody PropertyUnit propertyUnit) {
+            @Valid @RequestBody PropertyUnit propertyUnit) {
         logger.info(
                 "updatePropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
         PangoServiceResponse response = new PangoServiceResponse();
         response.setDeveloperText("Ok, property updated successfully");
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * This Property endpoint updates a specific Pango rental property unit with the rental details
+     * 
+     * @param userToken
+     * @param userReferenceId
+     * @param propertyReferenceId
+     * @param userRentRequest
+     * @return
+     */
+    @RequestMapping(value = "/properties/{propertyReferenceId}/rent", method = RequestMethod.PUT)
+    public ResponseEntity<?> rentPropertyUnit(@RequestHeader(value = "user-token") String userToken,
+            @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId,
+            @Valid @RequestBody UserRentRequest userRentRequest) {
+        logger.info("rentPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId
+                + " : " + userRentRequest);
+        PangoServiceResponse response = new PangoServiceResponse();
+        response.setDeveloperText("Ok, the Pango rental unit has been updated successfully with the rental details");
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * This Property endpoint updates a specific Pango rental property unit with the holding details. As part of this
+     * API the following orchestration will take place
+     * <ol>
+     * <li>Calling the tegopesa payment APIs for making a holding payment
+     * <li>Creating a transaction in customer transaction history and
+     * <li>Creating a record in unit holding history
+     * </ol>
+     * 
+     * @param userToken
+     * @param userReferenceId
+     * @param propertyReferenceId
+     * @param userRentRequest
+     * @return
+     */
+    @RequestMapping(value = "/properties/{propertyReferenceId}/hold", method = RequestMethod.PUT)
+    public ResponseEntity<?> holdPropertyUnit(@RequestHeader(value = "user-token") String userToken,
+            @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId,
+            @RequestParam String startDate, @RequestParam String endDate) {
+        logger.info("holdPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId
+                + " : " + startDate + " : " + endDate);
+        PangoServiceResponse response = new PangoServiceResponse();
+        response.setDeveloperText("Ok, the Pango rental unit has been updated successfully with the holding details");
         return ResponseEntity.ok(response);
     }
 }
