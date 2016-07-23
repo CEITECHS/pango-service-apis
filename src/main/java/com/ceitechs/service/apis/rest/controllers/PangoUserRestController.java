@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import com.ceitechs.service.apis.rest.resources.UserPreferenceRequest;
 import com.ceitechs.service.apis.rest.resources.UserPreferenceResponse;
 import com.ceitechs.service.apis.rest.resources.UserProfileRequest;
 import com.ceitechs.service.apis.rest.resources.UserRequest;
+import com.ceitechs.service.apis.rest.resources.models.Login;
 import com.ceitechs.service.apis.rest.resources.models.UserPreference;
 import com.ceitechs.service.apis.rest.resources.models.UserPreference.PreferenceCategory;
 import com.ceitechs.service.apis.rest.resources.models.UserPreference.PreferenceType;
@@ -184,5 +187,23 @@ public class PangoUserRestController {
         PangoServiceResponse response = new PangoServiceResponse();
         response.setDeveloperText("Ok, successfully updated the preference");
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * This endpoint will authenticate a pango user with supplied emailAddress and password, an expiring access token is
+     * returned along side the firstname, lastname as well the userReferenceId
+     * 
+     * @param login
+     * @return
+     */
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    public ResponseEntity<?> authenticate(@Valid @RequestBody Login login) {
+        logger.info("updateUserPreference : User Authentication Request : " + login);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.set("access-token", PangoUtility.generateIdAsString());
+        headers.set("userReferenceId", PangoUtility.generateIdAsString());
+        headers.set("lastName", "lName");
+        headers.set("firstName", "fName");
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 }
