@@ -1,5 +1,9 @@
 package com.ceitechs.service.apis.rest.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -14,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ceitechs.domain.service.domain.Address;
+import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.rest.resources.PropertyDetailResource;
 import com.ceitechs.service.apis.rest.resources.PropertyResource;
 import com.ceitechs.service.apis.rest.resources.PropertySearchCriteriaResource;
@@ -36,23 +42,35 @@ public class PangoPropertyRestController {
      * 
      * @param userToken
      * @param userReferenceId
-     * @param latitude
-     * @param longitude
-     * @param radius
-     * @param propertyPurpose
-     * @param moveInDate
-     * @param roomsCount
-     * @param bedRoomsCount
-     * @param selfContainedRooms
+     * @param propertySearchCriteriaResource
      * @return
      */
     @RequestMapping(value = "/properties", method = RequestMethod.GET)
     public ResponseEntity<?> getProperties(@RequestHeader(required = false, value = "user-token") String userToken,
             @RequestHeader(required = false) String userReferenceId,
             @Valid @RequestBody PropertySearchCriteriaResource propertySearchCriteriaResource) {
-        logger.info("getProperties : Request Params : " + userToken + " : " + userReferenceId);
-        // TODO : Return a list of Property
-        return ResponseEntity.ok("List of properties matching the search criteria : ");
+        logger.info("getProperties : Header : " + userToken + " : " + userReferenceId);
+        logger.info("getProperties : Request : " + propertySearchCriteriaResource);
+        List<PropertyResource> propertiesList = new ArrayList<>();
+        // Create a new Address
+        Address address = new Address();
+        address.setAddressLine1("Address Line 1");
+        address.setAddressLine2("Address Line 2");
+        address.setCity("City");
+        address.setState("State");
+        address.setCountry("Country");
+        address.setZip("12345");
+        IntStream.range(0, 5).forEach(i -> {
+            PropertyResource propertyResource = new PropertyResource();
+            propertyResource.setPropertyReferenceId(PangoUtility.generateIdAsString());
+            propertyResource.setPropertyDescription("Excellent Property");
+            propertyResource.setListingFor("RENT");
+            propertyResource.setAddress(address);
+            propertyResource.setDistance(i / 2);
+            // Add the property resource to the list
+            propertiesList.add(propertyResource);
+        });
+        return ResponseEntity.ok(propertiesList);
     }
 
     /**
@@ -64,8 +82,9 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties", method = RequestMethod.POST)
     public ResponseEntity<?> createProperty(@RequestHeader(value = "user-token") String userToken,
-            @RequestHeader String userReferenceId, @Valid @RequestBody PropertyResource propertyResource) {
-        logger.info("createProperty : Request Params : " + userToken + " : " + userReferenceId);
+            @RequestHeader String userReferenceId, @Valid @RequestBody PropertyDetailResource propertyDetailResource) {
+        logger.info("createProperty : Header Params : " + userToken + " : " + userReferenceId);
+        logger.info("createProperty : Request Params : " + propertyDetailResource);
         return new ResponseEntity<>("Ok, successfully created a new Property", HttpStatus.CREATED);
     }
 
@@ -75,17 +94,35 @@ public class PangoPropertyRestController {
      * 
      * @param userToken
      * @param userReferenceId
-     * @param status
+     * @param status - RENT or ON-HOLD
+     * @param by - Owner or User
      * @return
      */
     @RequestMapping(value = "/properties/list", method = RequestMethod.GET)
     public ResponseEntity<?> getUserPropertiesByStatus(@RequestHeader(value = "user-token") String userToken,
-            @RequestHeader String userReferenceId, @RequestParam String status) {
+            @RequestHeader String userReferenceId, @RequestParam String status, @RequestParam String by) {
         logger.info(
                 "getUserPropertiesByStatus : Request Params : " + userToken + " : " + userReferenceId + " : " + status);
-        PropertyResource resource = new PropertyResource();
-        // TODO: Return a list of Property
-        return ResponseEntity.ok(resource);
+        List<PropertyResource> propertiesList = new ArrayList<>();
+        // Create a new Address
+        Address address = new Address();
+        address.setAddressLine1("Address Line 1");
+        address.setAddressLine2("Address Line 2");
+        address.setCity("City");
+        address.setState("State");
+        address.setCountry("Country");
+        address.setZip("12345");
+        IntStream.range(0, 5).forEach(i -> {
+            PropertyResource propertyResource = new PropertyResource();
+            propertyResource.setPropertyReferenceId(PangoUtility.generateIdAsString());
+            propertyResource.setPropertyDescription("Excellent Property");
+            propertyResource.setListingFor("RENT");
+            propertyResource.setAddress(address);
+            propertyResource.setDistance(i / 2);
+            // Add the property resource to the list
+            propertiesList.add(propertyResource);
+        });
+        return ResponseEntity.ok(propertiesList);
     }
 
     /**
@@ -103,9 +140,26 @@ public class PangoPropertyRestController {
             @RequestHeader String userReferenceId, @RequestParam String referenceId, @RequestParam String by) {
         logger.info("getPendingPropertiesList : Request Params : " + userToken + " : " + userReferenceId + " : "
                 + referenceId + " : " + by);
-        PropertyResource resource = new PropertyResource();
-        // TODO: Return a list of Property
-        return ResponseEntity.ok(resource);
+        List<PropertyResource> propertiesList = new ArrayList<>();
+        // Create a new Address
+        Address address = new Address();
+        address.setAddressLine1("Address Line 1");
+        address.setAddressLine2("Address Line 2");
+        address.setCity("City");
+        address.setState("State");
+        address.setCountry("Country");
+        address.setZip("12345");
+        IntStream.range(0, 5).forEach(i -> {
+            PropertyResource propertyResource = new PropertyResource();
+            propertyResource.setPropertyReferenceId(PangoUtility.generateIdAsString());
+            propertyResource.setPropertyDescription("Excellent Property");
+            propertyResource.setListingFor("RENT");
+            propertyResource.setAddress(address);
+            propertyResource.setDistance(i / 2);
+            // Add the property resource to the list
+            propertiesList.add(propertyResource);
+        });
+        return ResponseEntity.ok(propertiesList);
     }
 
     /**
