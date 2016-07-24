@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ceitechs.domain.service.domain.UserPreference;
@@ -65,16 +66,29 @@ public class PangoUserRestController {
     }
 
     /**
-     * This endpoint will update the profile of an existing Pango User
+     * This endpoint will update the password of an existing Pango User
      * 
      * @param userReferenceId
      * @return
      */
-    @RequestMapping(value = "/users/{userReferenceId}/profile", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUserProfile(@PathVariable String userReferenceId,
+    @RequestMapping(value = "/users/{userReferenceId}/changepassword", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateUserPassword(@PathVariable String userReferenceId,
             @Valid @RequestBody UserProfileResource userProfileResource) {
-        logger.info("updateUserProfile : User Profile Request : " + userProfileResource);
-        return ResponseEntity.ok("Ok, User profile updated");
+        logger.info("updateUserPassword : User Profile Request : " + userProfileResource);
+        return ResponseEntity.ok("Ok, User password updated");
+    }
+
+    /**
+     * This endpoint will update the profile picture of an existing Pango User
+     * 
+     * @param userReferenceId
+     * @return
+     */
+    @RequestMapping(value = "/users/{userReferenceId}/changeprofilepic", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateUserProfilePic(@PathVariable String userReferenceId,
+            @Valid @RequestBody UserProfileResource userProfileResource) {
+        logger.info("updateUserProfilePic : User Profile Request : " + userProfileResource);
+        return ResponseEntity.ok("Ok, User profile picture updated");
     }
 
     /**
@@ -156,5 +170,17 @@ public class PangoUserRestController {
         headers.set("lastName", "lName");
         headers.set("firstName", "fName");
         return new ResponseEntity<>(headers, HttpStatus.OK);
+    }
+
+    /**
+     * This endpoint will verify a pango user with supplied access token
+     * 
+     * @param confirmationToken
+     * @return
+     */
+    @RequestMapping(value = "/verify/confirmAccount", method = RequestMethod.GET)
+    public ResponseEntity<?> verifyUser(@RequestParam("confirm_token") String confirmationToken) {
+        logger.info("verifyUser : Request Params : " + confirmationToken);
+        return ResponseEntity.ok("Ok, User verified.");
     }
 }

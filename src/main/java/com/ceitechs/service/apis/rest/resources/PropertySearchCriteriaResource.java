@@ -1,5 +1,7 @@
 package com.ceitechs.service.apis.rest.resources;
 
+import java.time.LocalDate;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -25,13 +27,13 @@ public class PropertySearchCriteriaResource {
     private double latitude;
 
     @NotNull
-    private int radius;
+    private int radius = 10;
 
     @NotNull
-    private String propertyPupose;
+    private String propertyPurpose = "HOME";
 
     @NotNull
-    private String moveInDate;
+    private String moveInDate = LocalDate.now().plusWeeks(2).toString();
 
     @NotNull
     private int roomsCount;

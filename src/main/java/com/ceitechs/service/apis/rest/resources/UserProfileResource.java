@@ -19,6 +19,12 @@ public class UserProfileResource {
     @JsonProperty(value = "password")
     private String password;
 
+    @JsonProperty(value = "newPassword")
+    private String newPassword;
+
+    @JsonProperty(value = "confirmPassword")
+    private String confirmPassword;
+
     @JsonProperty(value = "profilePic")
     private String profilePic;
 }
