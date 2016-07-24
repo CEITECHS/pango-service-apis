@@ -21,6 +21,8 @@ import lombok.ToString;
 @ToString
 public class PropertyDetailResource {
     private String propertyReferenceId;
+    
+    private String propertyUnitId;
 
     private String propertyDescription;
 

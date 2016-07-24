@@ -20,6 +20,8 @@ import lombok.ToString;
 public class PropertyResource {
     private String propertyReferenceId;
 
+    private String propertyUnitId;
+
     private String propertyDescription;
 
     private String listingFor;
