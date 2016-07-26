@@ -8,6 +8,8 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.GeoResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ceitechs.domain.service.domain.Address;
+import com.ceitechs.domain.service.domain.PropertySearchCriteria;
+import com.ceitechs.domain.service.domain.PropertyUnit;
+import com.ceitechs.domain.service.service.PangoDomainService;
 import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.rest.resources.PropertyDetailResource;
 import com.ceitechs.service.apis.rest.resources.PropertyResource;
@@ -35,6 +40,9 @@ public class PangoPropertyRestController {
 
     private static Logger logger = LoggerFactory.getLogger(PangoPropertyRestController.class);
 
+    @Autowired
+    PangoDomainService pangoDomainService;
+
     /**
      * The Properties endpoint returns information about *Pango* rental properties available around a given location.
      * The response includes some details about the rental property and lists the the property in the proper display
@@ -48,29 +56,22 @@ public class PangoPropertyRestController {
     @RequestMapping(value = "/properties", method = RequestMethod.GET)
     public ResponseEntity<?> getProperties(@RequestHeader(required = false, value = "user-token") String userToken,
             @RequestHeader(required = false) String userReferenceId,
-            @Valid @RequestBody PropertySearchCriteriaResource propertySearchCriteriaResource) {
+            @Valid PropertySearchCriteriaResource propertySearchCriteriaResource) {
         logger.info("getProperties : Header : " + userToken + " : " + userReferenceId);
         logger.info("getProperties : Request : " + propertySearchCriteriaResource);
-        List<PropertyResource> propertiesList = new ArrayList<>();
-        // Create a new Address
-        Address address = new Address();
-        address.setAddressLine1("Address Line 1");
-        address.setAddressLine2("Address Line 2");
-        address.setCity("City");
-        address.setState("State");
-        address.setCountry("Country");
-        address.setZip("12345");
-        IntStream.range(0, 5).forEach(i -> {
-            PropertyResource propertyResource = new PropertyResource();
-            propertyResource.setPropertyReferenceId(PangoUtility.generateIdAsString());
-            propertyResource.setPropertyDescription("Excellent Property");
-            propertyResource.setListingFor("RENT");
-            propertyResource.setAddress(address);
-            propertyResource.setDistance(i / 2);
-            // Add the property resource to the list
-            propertiesList.add(propertyResource);
-        });
-        return ResponseEntity.ok(propertiesList);
+
+        PropertySearchCriteria searchCriteria = new PropertySearchCriteria();
+        searchCriteria.setMinPrice(1000);
+        searchCriteria.setPropertyPupose("HOME");
+        searchCriteria.setBedRoomsCount(3);
+        searchCriteria.setLatitude(-6.662951);
+        searchCriteria.setLongitude(39.166650);
+        searchCriteria.setRadius(50);
+        searchCriteria.setMoveInDateAsString("2018-05-05");
+
+        List<GeoResult<PropertyUnit>> results = pangoDomainService.searchForProperties(searchCriteria, null);
+
+        return ResponseEntity.ok(results);
     }
 
     /**
