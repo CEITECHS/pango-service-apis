@@ -9,6 +9,9 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.data.geo.GeoResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +44,9 @@ public class PangoPropertyRestController {
     private static Logger logger = LoggerFactory.getLogger(PangoPropertyRestController.class);
 
     @Autowired
+    private ConversionService conversionService;
+
+    @Autowired
     PangoDomainService pangoDomainService;
 
     /**
@@ -70,6 +76,12 @@ public class PangoPropertyRestController {
         searchCriteria.setMoveInDateAsString("2018-05-05");
 
         List<GeoResult<PropertyUnit>> results = pangoDomainService.searchForProperties(searchCriteria, null);
+
+        ParameterizedTypeReference<GeoResult<PropertyUnit>> listParameterizedTypeReference = new ParameterizedTypeReference<GeoResult<PropertyUnit>>() { };
+        TypeDescriptor sourceType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(listParameterizedTypeReference.getClass()));
+        TypeDescriptor targetType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(PropertyResource.class));
+
+        List<PropertyResource> target = (List<PropertyResource>) conversionService.convert(results, sourceType, targetType);
 
         return ResponseEntity.ok(results);
     }
