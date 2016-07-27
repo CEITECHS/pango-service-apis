@@ -15,12 +15,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ceitechs.domain.service.domain.UserPreference;
 import com.ceitechs.domain.service.domain.UserPreference.PreferenceCategory;
 import com.ceitechs.domain.service.domain.UserPreference.PreferenceType;
 import com.ceitechs.domain.service.domain.UserSearchHistory;
@@ -55,12 +55,13 @@ public class PangoUserRestController {
     /**
      * This endpoint will update an existing Pango User
      * 
+     * @param userToken
      * @param userReferenceId
      * @return
      */
     @RequestMapping(value = "/users/{userReferenceId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@PathVariable String userReferenceId,
-            @Valid @RequestBody UserResource userResource) {
+    public ResponseEntity<?> updateUser(@RequestHeader(value = "user-token") String userToken,
+            @PathVariable String userReferenceId, @Valid @RequestBody UserResource userResource) {
         logger.info("updateUser : Request : " + userResource);
         return ResponseEntity.ok("Ok, User updated");
     }
@@ -68,12 +69,13 @@ public class PangoUserRestController {
     /**
      * This endpoint will update the password of an existing Pango User
      * 
+     * @param userToken
      * @param userReferenceId
      * @return
      */
     @RequestMapping(value = "/users/{userReferenceId}/changepassword", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUserPassword(@PathVariable String userReferenceId,
-            @Valid @RequestBody UserProfileResource userProfileResource) {
+    public ResponseEntity<?> updateUserPassword(@RequestHeader(value = "user-token") String userToken,
+            @PathVariable String userReferenceId, @Valid @RequestBody UserProfileResource userProfileResource) {
         logger.info("updateUserPassword : User Profile Request : " + userProfileResource);
         return ResponseEntity.ok("Ok, User password updated");
     }
@@ -81,12 +83,13 @@ public class PangoUserRestController {
     /**
      * This endpoint will update the profile picture of an existing Pango User
      * 
+     * @param userToken
      * @param userReferenceId
      * @return
      */
     @RequestMapping(value = "/users/{userReferenceId}/changeprofilepic", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUserProfilePic(@PathVariable String userReferenceId,
-            @Valid @RequestBody UserProfileResource userProfileResource) {
+    public ResponseEntity<?> updateUserProfilePic(@RequestHeader(value = "user-token") String userToken,
+            @PathVariable String userReferenceId, @Valid @RequestBody UserProfileResource userProfileResource) {
         logger.info("updateUserProfilePic : User Profile Request : " + userProfileResource);
         return ResponseEntity.ok("Ok, User profile picture updated");
     }
@@ -94,12 +97,13 @@ public class PangoUserRestController {
     /**
      * This endpoint will create a new preference for an existing Pango user
      * 
+     * @param userToken
      * @param userReferenceId
      * @return
      */
     @RequestMapping(value = "/users/{userReferenceId}/preferences", method = RequestMethod.POST)
-    public ResponseEntity<?> createUserPreference(@PathVariable String userReferenceId,
-            @Valid @RequestBody UserPreferenceResource userPreferenceResource) {
+    public ResponseEntity<?> createUserPreference(@RequestHeader(value = "user-token") String userToken,
+            @PathVariable String userReferenceId, @Valid @RequestBody UserPreferenceResource userPreferenceResource) {
         logger.info("createUserPreference : User Preference Request : " + userPreferenceResource);
         return new ResponseEntity<>("Ok, successfully created a new user preference", HttpStatus.CREATED);
     }
@@ -107,18 +111,20 @@ public class PangoUserRestController {
     /**
      * This endpoint will retrieve all the preferences for an existing Pango user
      * 
+     * @param userToken
      * @param userReferenceId
      * @return
      */
     @RequestMapping(value = "/users/{userReferenceId}/preferences", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserPreferences(@PathVariable String userReferenceId) {
+    public ResponseEntity<?> getUserPreferences(@RequestHeader(value = "user-token") String userToken,
+            @PathVariable String userReferenceId) {
         logger.info("getUserPreferences : User Reference Id : " + userReferenceId);
-        List<UserPreference> userPrefenceList = new ArrayList<>();
+        List<UserPreferenceResource> userPrefenceList = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
-            UserPreference userPreference = new UserPreference();
+            UserPreferenceResource userPreference = new UserPreferenceResource();
             userPreference.setPreferenceId(PangoUtility.generateIdAsString());
-            userPreference.setPreferenceType(PreferenceType.Notification);
-            userPreference.setCategory(PreferenceCategory.SEARCH);
+            userPreference.setPreferenceType(PreferenceType.Notification.name());
+            userPreference.setCategory(PreferenceCategory.SEARCH.name());
             if (i % 2 == 0) {
                 userPreference.setSendNotification(true);
                 userPreference.setActive(true);
@@ -126,8 +132,8 @@ public class PangoUserRestController {
                 userPreference.setSendNotification(false);
                 userPreference.setActive(false);
             }
-            userPreference.setFromDate(LocalDate.now());
-            userPreference.setToDate(LocalDate.now().plusMonths(6));
+            userPreference.setFromDate(LocalDate.now().toString());
+            userPreference.setToDate(LocalDate.now().plusMonths(6).toString());
 
             // Create a new User Search History
             UserSearchHistory userSearchHistory = new UserSearchHistory();
@@ -141,13 +147,15 @@ public class PangoUserRestController {
     /**
      * This endpoint will update an existing preference for an existing Pango user
      * 
+     * @param userToken
      * @param userReferenceId
      * @param preferenceId
      * @return
      */
     @RequestMapping(value = "/users/{userReferenceId}/preferences/{preferenceId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUserPreference(@PathVariable String userReferenceId,
-            @PathVariable String preferenceId, @Valid @RequestBody UserPreferenceResource userPreferenceResource) {
+    public ResponseEntity<?> updateUserPreference(@RequestHeader(value = "user-token") String userToken,
+            @PathVariable String userReferenceId, @PathVariable String preferenceId,
+            @Valid @RequestBody UserPreferenceResource userPreferenceResource) {
         logger.info(
                 "updateUserPreference : User Reference Id : " + userReferenceId + " Preference Id : " + preferenceId);
         logger.info("updateUserPreference : User Preference Request : " + userPreferenceResource);
@@ -165,7 +173,7 @@ public class PangoUserRestController {
     public ResponseEntity<?> authenticate(@Valid @RequestBody LoginResource loginResource) {
         logger.info("authenticate : User Authentication Request : " + loginResource);
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.set("access-token", PangoUtility.generateIdAsString());
+        headers.set("user-token", PangoUtility.generateIdAsString());
         headers.set("userReferenceId", PangoUtility.generateIdAsString());
         headers.set("lastName", "lName");
         headers.set("firstName", "fName");
@@ -179,7 +187,7 @@ public class PangoUserRestController {
      * @return
      */
     @RequestMapping(value = "/verify/confirmAccount", method = RequestMethod.GET)
-    public ResponseEntity<?> verifyUser(@RequestParam("confirm_token") String confirmationToken) {
+    public ResponseEntity<?> verifyUser(@RequestParam("confirm-token") String confirmationToken) {
         logger.info("verifyUser : Request Params : " + confirmationToken);
         return ResponseEntity.ok("Ok, User verified.");
     }

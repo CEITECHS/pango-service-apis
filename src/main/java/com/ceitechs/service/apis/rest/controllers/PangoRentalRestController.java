@@ -27,21 +27,19 @@ public class PangoRentalRestController {
     private static Logger logger = LoggerFactory.getLogger(PangoRentalRestController.class);
 
     /**
-     * This endpoint will returns the rental history of the owner or the customer as specified in the 'by' query
-     * parameter and the property Id
+     * This endpoint will returns the rental history of the owner or the customer as specified by the
+     * propertyReferenceId
      * 
      * @param userToken
      * @param userReferenceId
-     * @param landlordIndicator
      * @param propertyReferenceId
      * @return
      */
     @RequestMapping(value = "/rentals", method = RequestMethod.GET)
     public ResponseEntity<?> getRentalHistory(@RequestHeader(value = "user-token") String userToken,
-            @RequestHeader String userReferenceId, @RequestParam boolean landlordIndicator,
-            @RequestParam(required = false) String propertyReferenceId) {
-        logger.info("getRentalHistory : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId
-                + " : " + landlordIndicator);
+            @RequestHeader String userReferenceId, @RequestParam(required = false) String propertyReferenceId) {
+        logger.info(
+                "getRentalHistory : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
         List<UnitRentalHistoryResource> rentalHistoryList = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
             UnitRentalHistoryResource historyResource = new UnitRentalHistoryResource();
@@ -51,21 +49,18 @@ public class PangoRentalRestController {
     }
 
     /**
-     * This endpoint will returns the holding history of the owner or the customer as specified in the 'by' query
-     * parameter and the property Id
+     * This endpoint will returns the holding history of the owner or the customer as specified in the
+     * 'landlordIndicator' query parameter
      * 
      * @param userToken
      * @param userReferenceId
      * @param landlordIndicator
-     * @param propertyReferenceId
      * @return
      */
     @RequestMapping(value = "/holdings", method = RequestMethod.GET)
     public ResponseEntity<?> getHoldingHistory(@RequestHeader(value = "user-token") String userToken,
-            @RequestHeader String userReferenceId, @RequestParam boolean landlordIndicator,
-            @RequestParam(required = false) String propertyReferenceId) {
-        logger.info("getHoldingHistory : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId
-                + " : " + landlordIndicator);
+            @RequestHeader String userReferenceId, @RequestParam(defaultValue = "false") boolean landlordIndicator) {
+        logger.info("getHoldingHistory : Request : " + userToken + " : " + userReferenceId + " : " + landlordIndicator);
         List<UnitHoldingHistoryResource> holdingHistoryList = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
             UnitHoldingHistoryResource historyResource = new UnitHoldingHistoryResource();

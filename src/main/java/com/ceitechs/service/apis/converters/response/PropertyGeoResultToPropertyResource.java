@@ -1,4 +1,4 @@
-package com.ceitechs.service.apis.rest.converters.Response;
+package com.ceitechs.service.apis.converters.response;
 
 import com.ceitechs.domain.service.domain.PropertyUnit;
 import com.ceitechs.service.apis.rest.resources.PropertyResource;

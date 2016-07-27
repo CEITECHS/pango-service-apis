@@ -16,6 +16,8 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserPreferenceResource {
 
+    private String preferenceId;
+
     @JsonProperty("preferenceType")
     private String preferenceType;
 

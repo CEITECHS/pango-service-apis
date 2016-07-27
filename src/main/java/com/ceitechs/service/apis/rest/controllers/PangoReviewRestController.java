@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ceitechs.service.apis.rest.resources.ReviewResource;
@@ -40,9 +41,9 @@ public class PangoReviewRestController {
      * @param reviewResource
      * @return
      */
-    @RequestMapping(value = "/rentals/{rentalReferenceId}/reviews/{by}", method = RequestMethod.POST)
+    @RequestMapping(value = "/rentals/{rentalReferenceId}/reviews", method = RequestMethod.POST)
     public ResponseEntity<?> createReview(@RequestHeader(value = "user-token") String userToken,
-            @RequestHeader String userReferenceId, @PathVariable String by, @PathVariable String rentalReferenceId,
+            @RequestHeader String userReferenceId, @RequestParam String by, @PathVariable String rentalReferenceId,
             @Valid @RequestBody ReviewResource reviewResource) {
         logger.info("createReview : Request : " + userToken + " : " + userReferenceId + " : " + rentalReferenceId);
         return new ResponseEntity<>("Ok, successfully created a new review", HttpStatus.CREATED);
@@ -58,9 +59,9 @@ public class PangoReviewRestController {
      * @param referenceId
      * @return
      */
-    @RequestMapping(value = "/reviews/{by}/{referenceId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/reviews/by/{referenceId}", method = RequestMethod.GET)
     public ResponseEntity<?> getReviews(@RequestHeader(value = "user-token") String userToken,
-            @RequestHeader String userReferenceId, @PathVariable String by, @PathVariable String referenceId) {
+            @RequestHeader String userReferenceId, @RequestParam String by, @PathVariable String referenceId) {
         logger.info("getReviews : Request : " + userToken + " : " + userReferenceId + " : " + referenceId);
         List<ReviewResource> reviewList = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {

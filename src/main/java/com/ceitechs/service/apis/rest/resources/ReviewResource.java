@@ -18,21 +18,21 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ReviewResource {
-    private String reviewReferenceId;
-
-    private String userReferenceId;
-
-    private String propertyReferenceId;
+    private String reviewId;
 
     @NotNull
     private String reviewText;
 
-    private double rating;
-
     @NotNull
     private String reviewedBy;
 
-    private String createdDate = LocalDateTime.now(Clock.systemUTC()).toString();
+    private String reviewedDate = LocalDateTime.now(Clock.systemUTC()).toString();
 
     private boolean recommend;
+
+    private double rating;
+
+    private String userReferenceId;
+
+    private String propertyReferenceId;
 }
