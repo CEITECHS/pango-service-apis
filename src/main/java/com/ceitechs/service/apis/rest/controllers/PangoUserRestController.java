@@ -9,6 +9,9 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -21,8 +24,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ceitechs.domain.service.domain.User;
+import com.ceitechs.domain.service.domain.UserPreference;
 import com.ceitechs.domain.service.domain.UserPreference.PreferenceCategory;
 import com.ceitechs.domain.service.domain.UserPreference.PreferenceType;
+import com.ceitechs.domain.service.domain.UserProfile;
 import com.ceitechs.domain.service.domain.UserSearchHistory;
 import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.rest.resources.LoginResource;
@@ -40,6 +46,9 @@ public class PangoUserRestController {
 
     private static Logger logger = LoggerFactory.getLogger(PangoUserRestController.class);
 
+    @Autowired
+    private ConversionService conversionService;
+
     /**
      * This endpoint will create a new Pango user, an email with verification link will be sent to the registered email
      * address
@@ -49,6 +58,8 @@ public class PangoUserRestController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@Valid @RequestBody UserResource userResource) {
         logger.info("createUser : Request : " + userResource);
+        User user = conversionService.convert(userResource, User.class);
+        logger.info("Converted User : " + user);
         return new ResponseEntity<>("Ok, User registered, verification email sent", HttpStatus.CREATED);
     }
 
@@ -63,6 +74,8 @@ public class PangoUserRestController {
     public ResponseEntity<?> updateUser(@RequestHeader(value = "user-token") String userToken,
             @PathVariable String userReferenceId, @Valid @RequestBody UserResource userResource) {
         logger.info("updateUser : Request : " + userResource);
+        User user = conversionService.convert(userResource, User.class);
+        logger.info("Converted User : " + user);
         return ResponseEntity.ok("Ok, User updated");
     }
 
@@ -77,6 +90,8 @@ public class PangoUserRestController {
     public ResponseEntity<?> updateUserPassword(@RequestHeader(value = "user-token") String userToken,
             @PathVariable String userReferenceId, @Valid @RequestBody UserProfileResource userProfileResource) {
         logger.info("updateUserPassword : User Profile Request : " + userProfileResource);
+        UserProfile userProfile = conversionService.convert(userProfileResource, UserProfile.class);
+        logger.info("Converted User Profile : " + userProfile);
         return ResponseEntity.ok("Ok, User password updated");
     }
 
@@ -91,6 +106,8 @@ public class PangoUserRestController {
     public ResponseEntity<?> updateUserProfilePic(@RequestHeader(value = "user-token") String userToken,
             @PathVariable String userReferenceId, @Valid @RequestBody UserProfileResource userProfileResource) {
         logger.info("updateUserProfilePic : User Profile Request : " + userProfileResource);
+        UserProfile userProfile = conversionService.convert(userProfileResource, UserProfile.class);
+        logger.info("Converted User Profile : " + userProfile);
         return ResponseEntity.ok("Ok, User profile picture updated");
     }
 
@@ -105,6 +122,8 @@ public class PangoUserRestController {
     public ResponseEntity<?> createUserPreference(@RequestHeader(value = "user-token") String userToken,
             @PathVariable String userReferenceId, @Valid @RequestBody UserPreferenceResource userPreferenceResource) {
         logger.info("createUserPreference : User Preference Request : " + userPreferenceResource);
+        UserPreference userPreference = conversionService.convert(userPreferenceResource, UserPreference.class);
+        logger.info("Converted User Preference : " + userPreference);
         return new ResponseEntity<>("Ok, successfully created a new user preference", HttpStatus.CREATED);
     }
 
@@ -119,12 +138,12 @@ public class PangoUserRestController {
     public ResponseEntity<?> getUserPreferences(@RequestHeader(value = "user-token") String userToken,
             @PathVariable String userReferenceId) {
         logger.info("getUserPreferences : User Reference Id : " + userReferenceId);
-        List<UserPreferenceResource> userPrefenceList = new ArrayList<>();
+        List<UserPreference> userPreferenceList = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
-            UserPreferenceResource userPreference = new UserPreferenceResource();
+            UserPreference userPreference = new UserPreference();
             userPreference.setPreferenceId(PangoUtility.generateIdAsString());
-            userPreference.setPreferenceType(PreferenceType.Notification.name());
-            userPreference.setCategory(PreferenceCategory.SEARCH.name());
+            userPreference.setPreferenceType(PreferenceType.Notification);
+            userPreference.setCategory(PreferenceCategory.SEARCH);
             if (i % 2 == 0) {
                 userPreference.setSendNotification(true);
                 userPreference.setActive(true);
@@ -132,16 +151,19 @@ public class PangoUserRestController {
                 userPreference.setSendNotification(false);
                 userPreference.setActive(false);
             }
-            userPreference.setFromDate(LocalDate.now().toString());
-            userPreference.setToDate(LocalDate.now().plusMonths(6).toString());
-
+            userPreference.setFromDate(LocalDate.now());
+            userPreference.setToDate(LocalDate.now().plusMonths(6));
             // Create a new User Search History
             UserSearchHistory userSearchHistory = new UserSearchHistory();
             userPreference.setUserSearchHistory(userSearchHistory);
-
-            userPrefenceList.add(userPreference);
+            userPreferenceList.add(userPreference);
         });
-        return new ResponseEntity<>(userPrefenceList, HttpStatus.OK);
+        TypeDescriptor sourceType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(UserPreference.class));
+        TypeDescriptor targetType = TypeDescriptor.collection(List.class,
+                TypeDescriptor.valueOf(UserPreferenceResource.class));
+        List<UserPreferenceResource> target = (List<UserPreferenceResource>) conversionService
+                .convert(userPreferenceList, sourceType, targetType);
+        return new ResponseEntity<>(target, HttpStatus.OK);
     }
 
     /**
@@ -159,6 +181,8 @@ public class PangoUserRestController {
         logger.info(
                 "updateUserPreference : User Reference Id : " + userReferenceId + " Preference Id : " + preferenceId);
         logger.info("updateUserPreference : User Preference Request : " + userPreferenceResource);
+        UserPreference userPreference = conversionService.convert(userPreferenceResource, UserPreference.class);
+        logger.info("Converted User Preference : " + userPreference);
         return ResponseEntity.ok("Ok, successfully updated the preference");
     }
 

@@ -35,7 +35,7 @@ public class UserPreferenceResource {
 
     @JsonProperty("category")
     private String category;
-
+    
     @JsonProperty("userSearchHistory")
     private UserSearchHistory userSearchHistory;
 }

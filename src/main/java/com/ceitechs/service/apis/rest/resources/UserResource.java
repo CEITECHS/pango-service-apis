@@ -23,6 +23,8 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserResource {
 
+    private String userReferenceId;
+
     @JsonProperty("firstName")
     @NotNull
     private String firstName;
