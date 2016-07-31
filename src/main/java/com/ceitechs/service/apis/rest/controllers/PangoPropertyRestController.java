@@ -65,6 +65,7 @@ public class PangoPropertyRestController {
         logger.info("getProperties : Header : " + userToken + " : " + userReferenceId);
         logger.info("getProperties : Request : " + propertySearchCriteriaResource);
 
+
         PropertySearchCriteria searchCriteria = new PropertySearchCriteria();
         searchCriteria.setMinPrice(1000);
         searchCriteria.setPropertyPupose("HOME");

@@ -21,7 +21,7 @@ public class UserProfileResourceToUserProfile implements Converter<UserProfileRe
         Attachment attachment = new Attachment();
         attachment.setProfilePicture(true);
         attachment.setContentBase64(userProfileResource.getProfilePic());
-        userProfile.setAttachmentPhoto(attachment);
+        userProfile.setProfilePicture(attachment);
         return userProfile;
     }
 }
