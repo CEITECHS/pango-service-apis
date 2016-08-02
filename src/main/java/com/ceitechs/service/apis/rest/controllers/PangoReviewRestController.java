@@ -8,6 +8,9 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ceitechs.domain.service.domain.Review;
 import com.ceitechs.service.apis.rest.resources.ReviewResource;
 
 /**
@@ -29,6 +33,9 @@ import com.ceitechs.service.apis.rest.resources.ReviewResource;
 public class PangoReviewRestController {
 
     private static Logger logger = LoggerFactory.getLogger(PangoReviewRestController.class);
+
+    @Autowired
+    private ConversionService conversionService;
 
     /**
      * This endpoint will create a new review for the given Pango rental by an owner or a customer as specified in the
@@ -46,6 +53,8 @@ public class PangoReviewRestController {
             @RequestHeader String userReferenceId, @RequestParam String by, @PathVariable String rentalReferenceId,
             @Valid @RequestBody ReviewResource reviewResource) {
         logger.info("createReview : Request : " + userToken + " : " + userReferenceId + " : " + rentalReferenceId);
+        Review review = conversionService.convert(reviewResource, Review.class);
+        logger.info("Converted Review : " + review);
         return new ResponseEntity<>("Ok, successfully created a new review", HttpStatus.CREATED);
     }
 
@@ -63,12 +72,16 @@ public class PangoReviewRestController {
     public ResponseEntity<?> getReviews(@RequestHeader(value = "user-token") String userToken,
             @RequestHeader String userReferenceId, @RequestParam String by, @PathVariable String referenceId) {
         logger.info("getReviews : Request : " + userToken + " : " + userReferenceId + " : " + referenceId);
-        List<ReviewResource> reviewList = new ArrayList<>();
+        List<Review> reviewList = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
-            ReviewResource reviewResource = new ReviewResource();
-            reviewList.add(reviewResource);
+            Review review = new Review();
+            reviewList.add(review);
         });
-        return ResponseEntity.ok(reviewList);
+        TypeDescriptor sourceType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Review.class));
+        TypeDescriptor targetType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(ReviewResource.class));
+        List<ReviewResource> target = (List<ReviewResource>) conversionService.convert(reviewList, sourceType,
+                targetType);
+        return ResponseEntity.ok(target);
     }
 
     /**
@@ -85,6 +98,7 @@ public class PangoReviewRestController {
             @RequestHeader String userReferenceId, @PathVariable String reviewId,
             @Valid @RequestBody ReviewResource reviewResource) {
         logger.info("updateReview : Request : " + userToken + " : " + userReferenceId + " : " + reviewId);
+        Review review = conversionService.convert(reviewResource, Review.class);
         return ResponseEntity.ok("Ok, the review was updated successfully");
     }
 }
