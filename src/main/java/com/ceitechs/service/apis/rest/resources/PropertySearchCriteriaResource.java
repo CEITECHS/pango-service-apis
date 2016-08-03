@@ -43,6 +43,10 @@ public class PropertySearchCriteriaResource {
 
     @NotNull
     private int bathCount;
+    
+    private int page;
+    
+    private int pageSize;
 
     private double minPrice;
 

@@ -11,14 +11,27 @@ import org.springframework.data.geo.GeoResult;
  */
 public class PropertyGeoResultToPropertyResource implements Converter<GeoResult<PropertyUnit>, PropertyResource> {
 
-     @Override
+    @Override
     public PropertyResource convert(GeoResult<PropertyUnit> propertyUnitGeoResult) {
-         PropertyResource propertyResource = new PropertyResource();
-         PropertyUnit propertyUnit = propertyUnitGeoResult.getContent();
-         propertyResource.setDistance(propertyUnitGeoResult.getDistance().getValue());
-         propertyResource.setCoverPhoto(propertyUnit.getCoverPhoto());
-         propertyResource.setPropertyDescription(propertyUnit.getPropertyUnitDesc());
-         //TODO finish up the rest of properties.
+        PropertyResource propertyResource = new PropertyResource();
+        PropertyUnit propertyUnit = propertyUnitGeoResult.getContent();
+        propertyResource.setDistance(propertyUnitGeoResult.getDistance().getValue());
+        propertyResource.setCoverPhoto(propertyUnit.getCoverPhoto());
+        propertyResource.setPropertyDescription(propertyUnit.getPropertyUnitDesc());
+        propertyResource.setAddress(propertyUnit.getAddress());
+        propertyResource.setCoverPhoto(propertyUnit.getCoverPhoto());
+        propertyResource.setListingFor(propertyUnit.getListingFor().name());
+        propertyResource.setOwnerReferenceId(propertyUnit.getOwner().getUserReferenceId());
+        propertyResource.setPropertyReferenceId(propertyUnit.getPropertyUnitId());
+        propertyResource.setPropertyDescription(propertyUnit.getPropertyUnitDesc());
+        propertyResource.setPropertyFeature(propertyUnit.getFeatures());
+        propertyResource.setPropertyRent(propertyUnit.getRent());
+        propertyResource.setPropertyUnitId(propertyUnit.getUnitNumber());
+        propertyResource.setRating(propertyUnit.getPropertyRating());
+
+        // Missing properties
+        propertyResource.setAvailability("");
+        propertyResource.setReviewCount(0);
         return propertyResource;
     }
 }

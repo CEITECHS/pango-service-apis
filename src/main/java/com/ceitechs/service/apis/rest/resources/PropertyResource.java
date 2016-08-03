@@ -32,7 +32,7 @@ public class PropertyResource {
 
     private String availability;
 
-    private int rating;
+    private double rating;
 
     private int reviewCount;
 

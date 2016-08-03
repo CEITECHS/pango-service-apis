@@ -2,7 +2,6 @@ package com.ceitechs.service.apis.rest.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import javax.validation.Valid;
 
@@ -22,11 +21,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ceitechs.domain.service.domain.Address;
 import com.ceitechs.domain.service.domain.PropertySearchCriteria;
 import com.ceitechs.domain.service.domain.PropertyUnit;
 import com.ceitechs.domain.service.service.PangoDomainService;
-import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.rest.resources.PropertyDetailResource;
 import com.ceitechs.service.apis.rest.resources.PropertyResource;
 import com.ceitechs.service.apis.rest.resources.PropertySearchCriteriaResource;
@@ -64,26 +61,14 @@ public class PangoPropertyRestController {
             @Valid PropertySearchCriteriaResource propertySearchCriteriaResource) {
         logger.info("getProperties : Header : " + userToken + " : " + userReferenceId);
         logger.info("getProperties : Request : " + propertySearchCriteriaResource);
-
-
-        PropertySearchCriteria searchCriteria = new PropertySearchCriteria();
-        searchCriteria.setMinPrice(1000);
-        searchCriteria.setPropertyPupose("HOME");
-        searchCriteria.setBedRoomsCount(3);
-        searchCriteria.setLatitude(-6.662951);
-        searchCriteria.setLongitude(39.166650);
-        searchCriteria.setRadius(50);
-        searchCriteria.setMoveInDateAsString("2018-05-05");
-
+        PropertySearchCriteria searchCriteria = conversionService.convert(propertySearchCriteriaResource,
+                PropertySearchCriteria.class);
         List<GeoResult<PropertyUnit>> results = pangoDomainService.searchForProperties(searchCriteria, null);
-
         TypeDescriptor sourceType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(GeoResult.class));
         TypeDescriptor targetType = TypeDescriptor.collection(List.class,
                 TypeDescriptor.valueOf(PropertyResource.class));
-
         List<PropertyResource> target = (List<PropertyResource>) conversionService.convert(results, sourceType,
                 targetType);
-
         return ResponseEntity.ok(target);
     }
 
@@ -99,6 +84,8 @@ public class PangoPropertyRestController {
             @RequestHeader String userReferenceId, @Valid @RequestBody PropertyDetailResource propertyDetailResource) {
         logger.info("createProperty : Header Params : " + userToken + " : " + userReferenceId);
         logger.info("createProperty : Request Params : " + propertyDetailResource);
+        PropertyUnit propertyUnit = conversionService.convert(propertyDetailResource, PropertyUnit.class);
+        logger.info("Converted Property Unit : " + propertyUnit);
         return new ResponseEntity<>("Ok, successfully created a new Property", HttpStatus.CREATED);
     }
 
@@ -117,26 +104,13 @@ public class PangoPropertyRestController {
             @RequestHeader String userReferenceId, @RequestParam String status, @RequestParam String by) {
         logger.info(
                 "getUserPropertiesByStatus : Request Params : " + userToken + " : " + userReferenceId + " : " + status);
-        List<PropertyResource> propertiesList = new ArrayList<>();
-        // Create a new Address
-        Address address = new Address();
-        address.setAddressLine1("Address Line 1");
-        address.setAddressLine2("Address Line 2");
-        address.setCity("City");
-        address.setState("State");
-        address.setCountry("Country");
-        address.setZip("12345");
-        IntStream.range(0, 5).forEach(i -> {
-            PropertyResource propertyResource = new PropertyResource();
-            propertyResource.setPropertyReferenceId(PangoUtility.generateIdAsString());
-            propertyResource.setPropertyDescription("Excellent Property");
-            propertyResource.setListingFor("RENT");
-            propertyResource.setAddress(address);
-            propertyResource.setDistance(i / 2);
-            // Add the property resource to the list
-            propertiesList.add(propertyResource);
-        });
-        return ResponseEntity.ok(propertiesList);
+        List<GeoResult<PropertyUnit>> results = new ArrayList<>();
+        TypeDescriptor sourceType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(GeoResult.class));
+        TypeDescriptor targetType = TypeDescriptor.collection(List.class,
+                TypeDescriptor.valueOf(PropertyResource.class));
+        List<PropertyResource> target = (List<PropertyResource>) conversionService.convert(results, sourceType,
+                targetType);
+        return ResponseEntity.ok(target);
     }
 
     /**
@@ -154,26 +128,13 @@ public class PangoPropertyRestController {
             @RequestHeader String userReferenceId, @RequestParam String referenceId, @RequestParam String by) {
         logger.info("getPendingPropertiesList : Request Params : " + userToken + " : " + userReferenceId + " : "
                 + referenceId + " : " + by);
-        List<PropertyResource> propertiesList = new ArrayList<>();
-        // Create a new Address
-        Address address = new Address();
-        address.setAddressLine1("Address Line 1");
-        address.setAddressLine2("Address Line 2");
-        address.setCity("City");
-        address.setState("State");
-        address.setCountry("Country");
-        address.setZip("12345");
-        IntStream.range(0, 5).forEach(i -> {
-            PropertyResource propertyResource = new PropertyResource();
-            propertyResource.setPropertyReferenceId(PangoUtility.generateIdAsString());
-            propertyResource.setPropertyDescription("Excellent Property");
-            propertyResource.setListingFor("RENT");
-            propertyResource.setAddress(address);
-            propertyResource.setDistance(i / 2);
-            // Add the property resource to the list
-            propertiesList.add(propertyResource);
-        });
-        return ResponseEntity.ok(propertiesList);
+        List<GeoResult<PropertyUnit>> results = new ArrayList<>();
+        TypeDescriptor sourceType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(GeoResult.class));
+        TypeDescriptor targetType = TypeDescriptor.collection(List.class,
+                TypeDescriptor.valueOf(PropertyResource.class));
+        List<PropertyResource> target = (List<PropertyResource>) conversionService.convert(results, sourceType,
+                targetType);
+        return ResponseEntity.ok(target);
     }
 
     /**
@@ -188,7 +149,9 @@ public class PangoPropertyRestController {
     public ResponseEntity<?> getPropertyUnit(@RequestHeader(value = "user-token") String userToken,
             @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId) {
         logger.info("getPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
-        PropertyDetailResource propertyDetailResource = new PropertyDetailResource();
+        PropertyUnit propertyUnit = new PropertyUnit();
+        PropertyDetailResource propertyDetailResource = conversionService.convert(propertyUnit,
+                PropertyDetailResource.class);
         return ResponseEntity.ok(propertyDetailResource);
     }
 
@@ -207,6 +170,8 @@ public class PangoPropertyRestController {
             @Valid @RequestBody PropertyDetailResource propertyDetailResource) {
         logger.info(
                 "updatePropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
+        PropertyUnit propertyUnit = conversionService.convert(propertyDetailResource, PropertyUnit.class);
+        logger.info("Converted Property Unit : " + propertyUnit);
         return ResponseEntity.ok("Ok, property updated successfully");
     }
 

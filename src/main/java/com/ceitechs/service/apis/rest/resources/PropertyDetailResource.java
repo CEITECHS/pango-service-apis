@@ -38,7 +38,7 @@ public class PropertyDetailResource {
 
     private boolean autoListInd;
 
-    private int rating;
+    private double rating;
 
     private int reviewCount;
 

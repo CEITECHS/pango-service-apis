@@ -11,11 +11,14 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
 
 import com.ceitechs.domain.autoconfigure.EnablePangoDomainService;
+import com.ceitechs.service.apis.converters.request.PropertyDetailResourceToPropertyUnit;
+import com.ceitechs.service.apis.converters.request.PropertySearchCriteriaResourceToPropertySearchCriteria;
 import com.ceitechs.service.apis.converters.request.ReviewResourceToReview;
 import com.ceitechs.service.apis.converters.request.UserPreferenceResourceToUserPreference;
 import com.ceitechs.service.apis.converters.request.UserProfileResourceToUserProfile;
 import com.ceitechs.service.apis.converters.request.UserResourceToUser;
 import com.ceitechs.service.apis.converters.response.PropertyGeoResultToPropertyResource;
+import com.ceitechs.service.apis.converters.response.PropertyUnitToPropertyDetailResource;
 import com.ceitechs.service.apis.converters.response.ReviewToReviewResource;
 import com.ceitechs.service.apis.converters.response.UnitHoldingHistoryToUnitHoldingHistoryResource;
 import com.ceitechs.service.apis.converters.response.UnitRentalHistoryToUnitRentalHistoryResource;
@@ -54,6 +57,9 @@ public class PangoServiceApisApplication {
         converters.add(new ReviewToReviewResource());
         converters.add(new UnitHoldingHistoryToUnitHoldingHistoryResource());
         converters.add(new UnitRentalHistoryToUnitRentalHistoryResource());
+        converters.add(new PropertySearchCriteriaResourceToPropertySearchCriteria());
+        converters.add(new PropertyDetailResourceToPropertyUnit());
+        converters.add(new PropertyUnitToPropertyDetailResource());
         return converters;
     }
 }
