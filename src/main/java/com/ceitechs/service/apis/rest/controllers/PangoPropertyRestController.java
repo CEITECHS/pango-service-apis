@@ -1,5 +1,6 @@
 package com.ceitechs.service.apis.rest.controllers;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +22,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ceitechs.domain.service.domain.ListingFor;
 import com.ceitechs.domain.service.domain.PropertySearchCriteria;
 import com.ceitechs.domain.service.domain.PropertyUnit;
+import com.ceitechs.domain.service.domain.User;
 import com.ceitechs.domain.service.service.PangoDomainService;
 import com.ceitechs.service.apis.rest.resources.PropertyDetailResource;
 import com.ceitechs.service.apis.rest.resources.PropertyResource;
@@ -150,6 +153,9 @@ public class PangoPropertyRestController {
             @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId) {
         logger.info("getPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
         PropertyUnit propertyUnit = new PropertyUnit();
+        propertyUnit.setListingFor(ListingFor.RENT);
+        propertyUnit.setOwner(new User());
+        propertyUnit.setNextAvailableDate(LocalDateTime.now().plusDays(10));
         PropertyDetailResource propertyDetailResource = conversionService.convert(propertyUnit,
                 PropertyDetailResource.class);
         return ResponseEntity.ok(propertyDetailResource);
