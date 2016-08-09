@@ -3,7 +3,6 @@ package com.ceitechs.service.apis.converters.request;
 import org.springframework.core.convert.converter.Converter;
 
 import com.ceitechs.domain.service.domain.CorrespondenceType;
-import com.ceitechs.domain.service.domain.PropertyUnit;
 import com.ceitechs.domain.service.domain.PropertyUnitEnquiry;
 import com.ceitechs.domain.service.domain.User;
 import com.ceitechs.service.apis.rest.resources.EnquiryResource;
@@ -22,9 +21,7 @@ public class EnquiryResourceToPropertyUnitEnquiry implements Converter<EnquiryRe
         User user = new User();
         user.setUserReferenceId(source.getEnquiredBy());
         propertyUnitEnquiry.setProspectiveTenant(user);
-        PropertyUnit propertyUnit = new PropertyUnit();
-        propertyUnit.setPropertyUnitId(source.getPropertyReferenceId());
-        propertyUnitEnquiry.setPropertyUnit(propertyUnit);
+        propertyUnitEnquiry.setPropertyUnit(source.getPropertyUnit());
         propertyUnitEnquiry.setMessage(source.getMessage());
         propertyUnitEnquiry.setIntroduction(source.getIntroduction());
         propertyUnitEnquiry.setEnquiryType(CorrespondenceType.valueOf(source.getEnquiryType()));

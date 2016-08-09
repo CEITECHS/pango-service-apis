@@ -23,7 +23,7 @@ public class PropertyUnitEnquiryToEnquiryResource implements Converter<PropertyU
         enquiryResource.setEnquiryType(source.getEnquiryType().name());
         enquiryResource.setIntroduction(source.getIntroduction());
         enquiryResource.setMessage(source.getMessage());
-        enquiryResource.setPropertyReferenceId(source.getPropertyUnit().getPropertyUnitId());
+        enquiryResource.setPropertyUnit(source.getPropertyUnit());
         enquiryResource.setSubject(source.getSubject());
         // Missing Properties
         enquiryResource.setCorrespondence(Collections.emptyList());

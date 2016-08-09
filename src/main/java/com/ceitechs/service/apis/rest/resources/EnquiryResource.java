@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.ceitechs.domain.service.domain.PropertyUnit;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -39,7 +41,7 @@ public class EnquiryResource {
     @NotNull
     private String enquiryType;
 
-    private String propertyReferenceId;
+    private PropertyUnit propertyUnit;
 
     private int correspondenceCount;
 
