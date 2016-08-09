@@ -96,6 +96,14 @@
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
+        <repository>
+            <id>ceitechs.maven.snapshots2</id>
+            <url>https://raw.github.com/CEITECHS/pango-domain-service/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
     </repositories>
 
 </project>
