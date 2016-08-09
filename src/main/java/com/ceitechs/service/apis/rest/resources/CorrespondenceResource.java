@@ -21,12 +21,14 @@ import lombok.ToString;
 @ToString
 public class CorrespondenceResource {
 
+    private long correspondenceReferenceId;
+
     @NotNull
     private String message;
 
     private Attachment attachment;
 
-    private String correspondenceDate = LocalDateTime.now(Clock.systemUTC()).toString();
+    private LocalDateTime correspondenceDate = LocalDateTime.now(Clock.systemUTC());
 
     @NotNull
     private String correspondenceType;

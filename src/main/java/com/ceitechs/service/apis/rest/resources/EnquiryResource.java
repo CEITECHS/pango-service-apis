@@ -30,8 +30,8 @@ public class EnquiryResource {
 
     @NotNull
     private String message;
-    
-    private String enquiredOn = LocalDateTime.now().toString();
+
+    private LocalDateTime enquiredOn = LocalDateTime.now();
 
     @NotNull
     private String enquiredBy;

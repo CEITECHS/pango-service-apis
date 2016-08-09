@@ -30,6 +30,7 @@ import com.ceitechs.domain.service.domain.UserPreference.PreferenceCategory;
 import com.ceitechs.domain.service.domain.UserPreference.PreferenceType;
 import com.ceitechs.domain.service.domain.UserProfile;
 import com.ceitechs.domain.service.domain.UserSearchHistory;
+import com.ceitechs.domain.service.service.PangoDomainService;
 import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.rest.resources.LoginResource;
 import com.ceitechs.service.apis.rest.resources.UserPreferenceResource;
@@ -48,6 +49,9 @@ public class PangoUserRestController {
 
     @Autowired
     private ConversionService conversionService;
+
+    @Autowired
+    PangoDomainService pangoDomainService;
 
     /**
      * This endpoint will create a new Pango user, an email with verification link will be sent to the registered email

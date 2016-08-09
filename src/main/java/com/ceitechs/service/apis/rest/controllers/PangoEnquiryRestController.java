@@ -8,6 +8,9 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +21,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ceitechs.domain.service.domain.CorrespondenceType;
+import com.ceitechs.domain.service.domain.EnquiryCorrespondence;
+import com.ceitechs.domain.service.domain.PropertyUnit;
+import com.ceitechs.domain.service.domain.PropertyUnitEnquiry;
+import com.ceitechs.domain.service.domain.User;
 import com.ceitechs.service.apis.rest.resources.CorrespondenceResource;
 import com.ceitechs.service.apis.rest.resources.EnquiryResource;
 
@@ -30,6 +38,9 @@ import com.ceitechs.service.apis.rest.resources.EnquiryResource;
 public class PangoEnquiryRestController {
 
     private static Logger logger = LoggerFactory.getLogger(PangoEnquiryRestController.class);
+
+    @Autowired
+    private ConversionService conversionService;
 
     /**
      * This Enquiries endpoint will create a new Enquiry about a Pango based property, that will subsequently notify the
@@ -46,6 +57,8 @@ public class PangoEnquiryRestController {
             @Valid @RequestBody EnquiryResource enquiryResource) {
         logger.info("createEnquiry : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
         logger.info("createEnquiry : Request : " + enquiryResource);
+        PropertyUnitEnquiry propertyUnitEnquiry = conversionService.convert(enquiryResource, PropertyUnitEnquiry.class);
+        logger.info("converted property unit enquiry : " + propertyUnitEnquiry);
         return new ResponseEntity<>("The request has been fulfilled and resulted in a new resource being created",
                 HttpStatus.CREATED);
     }
@@ -67,13 +80,23 @@ public class PangoEnquiryRestController {
             @RequestParam(defaultValue = "false") boolean landlordIndicator) {
         logger.info("getPropertyEnquiries : Request : " + userToken + " : " + userReferenceId + " : "
                 + propertyReferenceId + " : " + landlordIndicator);
-        List<EnquiryResource> enquiryResourceList = new ArrayList<>();
+        List<PropertyUnitEnquiry> results = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
-            EnquiryResource enquiryResource = new EnquiryResource();
-            enquiryResource.setPropertyReferenceId(propertyReferenceId);
-            enquiryResourceList.add(enquiryResource);
+            PropertyUnitEnquiry propertyUnitEnquiry = new PropertyUnitEnquiry();
+            PropertyUnit propertyUnit = new PropertyUnit();
+            propertyUnit.setPropertyUnitId(propertyReferenceId);
+            propertyUnitEnquiry.setPropertyUnit(propertyUnit);
+            propertyUnitEnquiry.setProspectiveTenant(new User());
+            propertyUnitEnquiry.setEnquiryType(CorrespondenceType.INTERESTED);
+            results.add(propertyUnitEnquiry);
         });
-        return ResponseEntity.ok(enquiryResourceList);
+        TypeDescriptor sourceType = TypeDescriptor.collection(List.class,
+                TypeDescriptor.valueOf(PropertyUnitEnquiry.class));
+        TypeDescriptor targetType = TypeDescriptor.collection(List.class,
+                TypeDescriptor.valueOf(EnquiryResource.class));
+        List<EnquiryResource> target = (List<EnquiryResource>) conversionService.convert(results, sourceType,
+                targetType);
+        return ResponseEntity.ok(target);
     }
 
     /**
@@ -91,12 +114,23 @@ public class PangoEnquiryRestController {
     public ResponseEntity<?> getAllEnquiries(@RequestHeader(value = "user-token") String userToken,
             @RequestHeader String userReferenceId, @RequestParam(defaultValue = "false") boolean landlordIndicator) {
         logger.info("getAllEnquiries : Request : " + userToken + " : " + userReferenceId + " : " + landlordIndicator);
-        List<EnquiryResource> enquiryResourceList = new ArrayList<>();
+        List<PropertyUnitEnquiry> results = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
-            EnquiryResource enquiryResource = new EnquiryResource();
-            enquiryResourceList.add(enquiryResource);
+            PropertyUnitEnquiry propertyUnitEnquiry = new PropertyUnitEnquiry();
+            PropertyUnit propertyUnit = new PropertyUnit();
+            propertyUnit.setPropertyUnitId("12345");
+            propertyUnitEnquiry.setPropertyUnit(propertyUnit);
+            propertyUnitEnquiry.setProspectiveTenant(new User());
+            propertyUnitEnquiry.setEnquiryType(CorrespondenceType.INTERESTED);
+            results.add(propertyUnitEnquiry);
         });
-        return ResponseEntity.ok(enquiryResourceList);
+        TypeDescriptor sourceType = TypeDescriptor.collection(List.class,
+                TypeDescriptor.valueOf(PropertyUnitEnquiry.class));
+        TypeDescriptor targetType = TypeDescriptor.collection(List.class,
+                TypeDescriptor.valueOf(EnquiryResource.class));
+        List<EnquiryResource> target = (List<EnquiryResource>) conversionService.convert(results, sourceType,
+                targetType);
+        return ResponseEntity.ok(target);
     }
 
     /**
@@ -115,6 +149,9 @@ public class PangoEnquiryRestController {
             @Valid @RequestBody CorrespondenceResource correspondenceResource) {
         logger.info("updateEnquiry : Request : " + userToken + " : " + userReferenceId + " : " + enquiryReferenceId);
         logger.info("updateEnquiry : Request : " + correspondenceResource);
+        EnquiryCorrespondence enquiryCorrespondence = conversionService.convert(correspondenceResource,
+                EnquiryCorrespondence.class);
+        logger.info("updateEnquiry : converted enquiry correspondence : " + enquiryCorrespondence);
         return ResponseEntity.ok("Ok, Enquiry updated");
     }
 
@@ -131,11 +168,22 @@ public class PangoEnquiryRestController {
             @RequestHeader String userReferenceId, @PathVariable String enquiryReferenceId) {
         logger.info("getEnquiryCorrespondence : Request : " + userToken + " : " + userReferenceId + " : "
                 + enquiryReferenceId);
-        List<EnquiryResource> enquiryResourceList = new ArrayList<>();
+        List<PropertyUnitEnquiry> results = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
-            EnquiryResource enquiryResource = new EnquiryResource();
-            enquiryResourceList.add(enquiryResource);
+            PropertyUnitEnquiry propertyUnitEnquiry = new PropertyUnitEnquiry();
+            PropertyUnit propertyUnit = new PropertyUnit();
+            propertyUnit.setPropertyUnitId("12345");
+            propertyUnitEnquiry.setPropertyUnit(propertyUnit);
+            propertyUnitEnquiry.setProspectiveTenant(new User());
+            propertyUnitEnquiry.setEnquiryType(CorrespondenceType.INTERESTED);
+            results.add(propertyUnitEnquiry);
         });
-        return ResponseEntity.ok(enquiryResourceList);
+        TypeDescriptor sourceType = TypeDescriptor.collection(List.class,
+                TypeDescriptor.valueOf(PropertyUnitEnquiry.class));
+        TypeDescriptor targetType = TypeDescriptor.collection(List.class,
+                TypeDescriptor.valueOf(EnquiryResource.class));
+        List<EnquiryResource> target = (List<EnquiryResource>) conversionService.convert(results, sourceType,
+                targetType);
+        return ResponseEntity.ok(target);
     }
 }
