@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Email;
 
 import com.ceitechs.domain.service.domain.Address;
+import com.ceitechs.domain.service.domain.PangoUserRole;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -49,4 +50,6 @@ public class UserResource {
     @JsonProperty("address")
     @NotNull
     private Address address;
+
+    private PangoUserRole role = PangoUserRole.USER;
 }

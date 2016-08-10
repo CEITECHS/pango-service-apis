@@ -1,6 +1,7 @@
 package com.ceitechs.service.apis.converters.request;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import org.springframework.core.convert.converter.Converter;
 
@@ -28,6 +29,7 @@ public class UserResourceToUser implements Converter<UserResource, User> {
         userProfile.setCreatedDate(LocalDate.now());
         userProfile.setPassword(userResource.getPassword());
         userProfile.setVerified(false);
+        userProfile.setRoles(Arrays.asList(userResource.getRole()));
         user.setProfile(userProfile);
         user.setAddress(userResource.getAddress());
         return user;

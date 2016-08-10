@@ -30,8 +30,11 @@ import com.ceitechs.domain.service.domain.UserPreference.PreferenceCategory;
 import com.ceitechs.domain.service.domain.UserPreference.PreferenceType;
 import com.ceitechs.domain.service.domain.UserProfile;
 import com.ceitechs.domain.service.domain.UserSearchHistory;
+import com.ceitechs.domain.service.domain.UserUpdating;
+import com.ceitechs.domain.service.service.EntityExists;
 import com.ceitechs.domain.service.service.PangoDomainService;
 import com.ceitechs.domain.service.util.PangoUtility;
+import com.ceitechs.service.apis.exception.UserAlreadyExistsException;
 import com.ceitechs.service.apis.rest.resources.LoginResource;
 import com.ceitechs.service.apis.rest.resources.UserPreferenceResource;
 import com.ceitechs.service.apis.rest.resources.UserProfileResource;
@@ -64,6 +67,12 @@ public class PangoUserRestController {
         logger.info("createUser : Request : " + userResource);
         User user = conversionService.convert(userResource, User.class);
         logger.info("Converted User : " + user);
+        try {
+            pangoDomainService.registerUser(user);
+        } catch (EntityExists ee) {
+            throw new UserAlreadyExistsException(ee.getMessage(), ee.getCause());
+        }
+        logger.info("User '" + user.getEmailAddress() + "' created successfully.");
         return new ResponseEntity<>("Ok, User registered, verification email sent", HttpStatus.CREATED);
     }
 
@@ -80,6 +89,8 @@ public class PangoUserRestController {
         logger.info("updateUser : Request : " + userResource);
         User user = conversionService.convert(userResource, User.class);
         logger.info("Converted User : " + user);
+        pangoDomainService.updateUserInformation(user, UserUpdating.BASIC_INFO);
+        logger.info("User " + user.getEmailAddress() + "'s information updated successfully.");
         return ResponseEntity.ok("Ok, User updated");
     }
 
@@ -96,6 +107,11 @@ public class PangoUserRestController {
         logger.info("updateUserPassword : User Profile Request : " + userProfileResource);
         UserProfile userProfile = conversionService.convert(userProfileResource, UserProfile.class);
         logger.info("Converted User Profile : " + userProfile);
+        User user = new User();
+        user.setUserReferenceId(userReferenceId);
+        user.setProfile(userProfile);
+        pangoDomainService.updateUserInformation(user, UserUpdating.PASSWORD_CHANGE);
+        logger.info("User " + userReferenceId + "'s password updated successfully.");
         return ResponseEntity.ok("Ok, User password updated");
     }
 
@@ -112,6 +128,11 @@ public class PangoUserRestController {
         logger.info("updateUserProfilePic : User Profile Request : " + userProfileResource);
         UserProfile userProfile = conversionService.convert(userProfileResource, UserProfile.class);
         logger.info("Converted User Profile : " + userProfile);
+        User user = new User();
+        user.setUserReferenceId(userReferenceId);
+        user.setProfile(userProfile);
+        pangoDomainService.updateUserInformation(user, UserUpdating.PROFILE_PICTURE);
+        logger.info("User " + userReferenceId + "'s profile pic updated successfully.");
         return ResponseEntity.ok("Ok, User profile picture updated");
     }
 
