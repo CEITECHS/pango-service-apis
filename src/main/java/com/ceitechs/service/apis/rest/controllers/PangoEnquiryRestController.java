@@ -6,6 +6,7 @@ import java.util.stream.IntStream;
 
 import javax.validation.Valid;
 
+import com.ceitechs.domain.service.service.PangoEnquiryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class PangoEnquiryRestController {
 
     @Autowired
     private ConversionService conversionService;
+
+    @Autowired
+    private PangoEnquiryService pangoEnquiryService;
 
     /**
      * This Enquiries endpoint will create a new Enquiry about a Pango based property, that will subsequently notify the
