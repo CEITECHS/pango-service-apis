@@ -2,7 +2,7 @@ package com.ceitechs.service.apis.converters.response;
 
 import org.springframework.core.convert.converter.Converter;
 
-import com.ceitechs.domain.service.domain.UnitHoldingHistory;
+import com.ceitechs.domain.service.domain.PropertyHoldingHistory;
 import com.ceitechs.service.apis.rest.resources.UnitHoldingHistoryResource;
 
 /**
@@ -11,16 +11,16 @@ import com.ceitechs.service.apis.rest.resources.UnitHoldingHistoryResource;
  * @since 1.0
  */
 public class UnitHoldingHistoryToUnitHoldingHistoryResource
-        implements Converter<UnitHoldingHistory, UnitHoldingHistoryResource> {
+        implements Converter<PropertyHoldingHistory, UnitHoldingHistoryResource> {
 
     @Override
-    public UnitHoldingHistoryResource convert(UnitHoldingHistory unitHoldingHistory) {
+    public UnitHoldingHistoryResource convert(PropertyHoldingHistory unitHoldingHistory) {
         UnitHoldingHistoryResource holdingHistoryResource = new UnitHoldingHistoryResource();
         holdingHistoryResource.setEndDate(unitHoldingHistory.getEndDate().toString());
         holdingHistoryResource.setHoldingReferenceId(unitHoldingHistory.getHoldingReferenceId());
-        holdingHistoryResource.setPropertyReferenceId(unitHoldingHistory.getPropertyUnit().getPropertyUnitId());
+        holdingHistoryResource.setPropertyReferenceId(unitHoldingHistory.getPropertyUnit().getPropertyId());
         holdingHistoryResource.setStartDate(unitHoldingHistory.getStartDate().toString());
-        holdingHistoryResource.setTimeRemaining(unitHoldingHistory.getRemaingTme());
+        holdingHistoryResource.setTimeRemaining(unitHoldingHistory.getRemainingTme());
         holdingHistoryResource.setUserReferenceId(unitHoldingHistory.getUser().getUserReferenceId());
         return holdingHistoryResource;
     }

@@ -88,7 +88,7 @@ public class PangoEnquiryRestController {
         IntStream.range(0, 5).forEach(i -> {
             PropertyUnitEnquiry propertyUnitEnquiry = new PropertyUnitEnquiry();
             PropertyUnit propertyUnit = new PropertyUnit();
-            propertyUnit.setPropertyUnitId(propertyReferenceId);
+            propertyUnit.setPropertyId(propertyReferenceId);
             propertyUnitEnquiry.setPropertyUnit(propertyUnit);
             propertyUnitEnquiry.setProspectiveTenant(new User());
             propertyUnitEnquiry.setEnquiryType(CorrespondenceType.INTERESTED);
@@ -122,7 +122,7 @@ public class PangoEnquiryRestController {
         IntStream.range(0, 5).forEach(i -> {
             PropertyUnitEnquiry propertyUnitEnquiry = new PropertyUnitEnquiry();
             PropertyUnit propertyUnit = new PropertyUnit();
-            propertyUnit.setPropertyUnitId("12345");
+            propertyUnit.setPropertyId("12345");
             propertyUnitEnquiry.setPropertyUnit(propertyUnit);
             propertyUnitEnquiry.setProspectiveTenant(new User());
             propertyUnitEnquiry.setEnquiryType(CorrespondenceType.INTERESTED);
@@ -176,7 +176,7 @@ public class PangoEnquiryRestController {
         IntStream.range(0, 5).forEach(i -> {
             PropertyUnitEnquiry propertyUnitEnquiry = new PropertyUnitEnquiry();
             PropertyUnit propertyUnit = new PropertyUnit();
-            propertyUnit.setPropertyUnitId("12345");
+            propertyUnit.setPropertyId("12345");
             propertyUnitEnquiry.setPropertyUnit(propertyUnit);
             propertyUnitEnquiry.setProspectiveTenant(new User());
             propertyUnitEnquiry.setEnquiryType(CorrespondenceType.INTERESTED);

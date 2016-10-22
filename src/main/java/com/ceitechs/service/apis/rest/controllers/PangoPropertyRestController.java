@@ -89,6 +89,7 @@ public class PangoPropertyRestController {
         logger.info("createProperty : Request Params : " + propertyDetailResource);
         PropertyUnit propertyUnit = conversionService.convert(propertyDetailResource, PropertyUnit.class);
         logger.info("Converted Property Unit : " + propertyUnit);
+        pangoDomainService.createProperty(propertyUnit, null);
         return new ResponseEntity<>("Ok, successfully created a new Property", HttpStatus.CREATED);
     }
 
@@ -113,6 +114,7 @@ public class PangoPropertyRestController {
                 TypeDescriptor.valueOf(PropertyResource.class));
         List<PropertyResource> target = (List<PropertyResource>) conversionService.convert(results, sourceType,
                 targetType);
+        
         return ResponseEntity.ok(target);
     }
 

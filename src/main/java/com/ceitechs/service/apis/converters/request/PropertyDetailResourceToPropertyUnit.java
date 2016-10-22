@@ -1,11 +1,13 @@
 package com.ceitechs.service.apis.converters.request;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.core.convert.converter.Converter;
 
 import com.ceitechs.domain.service.domain.ListingFor;
 import com.ceitechs.domain.service.domain.PropertyUnit;
+import com.ceitechs.domain.service.domain.PropertyUnit.PropertyPurpose;
 import com.ceitechs.domain.service.domain.User;
 import com.ceitechs.service.apis.rest.resources.PropertyDetailResource;
 
@@ -34,9 +36,13 @@ public class PropertyDetailResourceToPropertyUnit implements Converter<PropertyD
         propertyUnit.setPropertyRating(source.getRating());
         propertyUnit.setPropertyTerms(source.getPropertyTerms());
         propertyUnit.setPropertyUnitDesc(source.getPropertyDescription());
-        propertyUnit.setPropertyUnitId(source.getPropertyReferenceId());
+        propertyUnit.setPropertyId(source.getPropertyReferenceId());
         propertyUnit.setRent(source.getPropertyRent());
         propertyUnit.setUnitNumber(source.getPropertyUnitId());
+        //TODO Move this code to pangoUtility class for date conversion
+        propertyUnit.setNextAvailableDate(LocalDateTime.parse(source.getAvailableOn(),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        propertyUnit.setPurpose(PropertyPurpose.valueOf(source.getPurpose()));
+
         // Missing properties
         // propertyUnit.setEnquiries();
         // propertyUnit.setHistory();

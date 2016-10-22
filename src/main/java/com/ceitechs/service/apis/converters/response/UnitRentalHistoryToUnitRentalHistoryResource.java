@@ -2,7 +2,7 @@ package com.ceitechs.service.apis.converters.response;
 
 import org.springframework.core.convert.converter.Converter;
 
-import com.ceitechs.domain.service.domain.UnitRentalHistory;
+import com.ceitechs.domain.service.domain.PropertyRentalHistory;
 import com.ceitechs.service.apis.rest.resources.UnitRentalHistoryResource;
 
 /**
@@ -11,14 +11,14 @@ import com.ceitechs.service.apis.rest.resources.UnitRentalHistoryResource;
  * @since 1.0
  */
 public class UnitRentalHistoryToUnitRentalHistoryResource
-        implements Converter<UnitRentalHistory, UnitRentalHistoryResource> {
+        implements Converter<PropertyRentalHistory, UnitRentalHistoryResource> {
 
     @Override
-    public UnitRentalHistoryResource convert(UnitRentalHistory unitRentalHistory) {
+    public UnitRentalHistoryResource convert(PropertyRentalHistory unitRentalHistory) {
         UnitRentalHistoryResource rentalHistoryResource = new UnitRentalHistoryResource();
         rentalHistoryResource.setActive(unitRentalHistory.isActive());
         rentalHistoryResource.setEndDate(unitRentalHistory.getEndDate().toString());
-        rentalHistoryResource.setPropertyReferenceId(unitRentalHistory.getPropertyUnit().getPropertyUnitId());
+        rentalHistoryResource.setPropertyReferenceId(unitRentalHistory.getPropertyUnit().getPropertyId());
         rentalHistoryResource.setRentalReferenceId(unitRentalHistory.getRentalReferenceId());
         rentalHistoryResource.setStartDate(unitRentalHistory.getStartDate().toString());
         rentalHistoryResource.setUserReferenceId(unitRentalHistory.getUser().getUserReferenceId());

@@ -55,4 +55,6 @@ public class PropertyDetailResource {
     private String propertyTerms;
 
     private boolean active;
+    
+    private String purpose;
 }

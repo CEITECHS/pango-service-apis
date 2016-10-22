@@ -27,7 +27,7 @@ public class PropertyUnitToPropertyDetailResource implements Converter<PropertyU
         detailResource.setRating(source.getPropertyRating());
         detailResource.setPropertyTerms(source.getPropertyTerms());
         detailResource.setPropertyDescription(source.getPropertyUnitDesc());
-        detailResource.setPropertyReferenceId(source.getPropertyUnitId());
+        detailResource.setPropertyReferenceId(source.getPropertyId());
         detailResource.setPropertyRent(source.getRent());
         detailResource.setPropertyUnitId(source.getUnitNumber());
         detailResource.setAvailableOn(source.getNextAvailableDate().toString());

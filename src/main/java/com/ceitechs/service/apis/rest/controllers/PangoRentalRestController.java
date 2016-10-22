@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ceitechs.domain.service.domain.PropertyHoldingHistory;
 import com.ceitechs.domain.service.domain.PropertyUnit;
-import com.ceitechs.domain.service.domain.UnitHoldingHistory;
-import com.ceitechs.domain.service.domain.UnitRentalHistory;
+import com.ceitechs.domain.service.domain.PropertyRentalHistory;
 import com.ceitechs.domain.service.domain.User;
 import com.ceitechs.service.apis.rest.resources.UnitHoldingHistoryResource;
 import com.ceitechs.service.apis.rest.resources.UnitRentalHistoryResource;
@@ -52,9 +52,9 @@ public class PangoRentalRestController {
             @RequestHeader String userReferenceId, @RequestParam(required = false) String propertyReferenceId) {
         logger.info(
                 "getRentalHistory : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
-        List<UnitRentalHistory> rentalHistoryList = new ArrayList<>();
+        List<PropertyRentalHistory> rentalHistoryList = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
-            UnitRentalHistory historyResource = new UnitRentalHistory();
+        	PropertyRentalHistory historyResource = new PropertyRentalHistory();
             historyResource.setStartDate(LocalDate.now());
             historyResource.setEndDate(LocalDate.now().plusMonths(12));
             historyResource.setPropertyUnit(new PropertyUnit());
@@ -62,7 +62,7 @@ public class PangoRentalRestController {
             rentalHistoryList.add(historyResource);
         });
         TypeDescriptor sourceType = TypeDescriptor.collection(List.class,
-                TypeDescriptor.valueOf(UnitRentalHistory.class));
+                TypeDescriptor.valueOf(PropertyRentalHistory.class));
         TypeDescriptor targetType = TypeDescriptor.collection(List.class,
                 TypeDescriptor.valueOf(UnitRentalHistoryResource.class));
         List<UnitRentalHistoryResource> target = (List<UnitRentalHistoryResource>) conversionService
@@ -83,9 +83,9 @@ public class PangoRentalRestController {
     public ResponseEntity<?> getHoldingHistory(@RequestHeader(value = "user-token") String userToken,
             @RequestHeader String userReferenceId, @RequestParam(defaultValue = "false") boolean landlordIndicator) {
         logger.info("getHoldingHistory : Request : " + userToken + " : " + userReferenceId + " : " + landlordIndicator);
-        List<UnitHoldingHistory> holdingHistoryList = new ArrayList<>();
+        List<PropertyHoldingHistory> holdingHistoryList = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
-            UnitHoldingHistory historyResource = new UnitHoldingHistory();
+        	PropertyHoldingHistory historyResource = new PropertyHoldingHistory();
             historyResource.setEndDate(LocalDateTime.now().plusHours(48));
             historyResource.setStartDate(LocalDateTime.now());
             historyResource.setPropertyUnit(new PropertyUnit());
@@ -93,7 +93,7 @@ public class PangoRentalRestController {
             holdingHistoryList.add(historyResource);
         });
         TypeDescriptor sourceType = TypeDescriptor.collection(List.class,
-                TypeDescriptor.valueOf(UnitHoldingHistory.class));
+                TypeDescriptor.valueOf(PropertyHoldingHistory.class));
         TypeDescriptor targetType = TypeDescriptor.collection(List.class,
                 TypeDescriptor.valueOf(UnitHoldingHistoryResource.class));
         List<UnitHoldingHistoryResource> target = (List<UnitHoldingHistoryResource>) conversionService

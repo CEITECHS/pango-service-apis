@@ -22,7 +22,7 @@ public class PropertyGeoResultToPropertyResource implements Converter<GeoResult<
         propertyResource.setCoverPhoto(propertyUnit.getCoverPhoto());
         propertyResource.setListingFor(propertyUnit.getListingFor().name());
         propertyResource.setOwnerReferenceId(propertyUnit.getOwner().getUserReferenceId());
-        propertyResource.setPropertyReferenceId(propertyUnit.getPropertyUnitId());
+        propertyResource.setPropertyReferenceId(propertyUnit.getPropertyId());
         propertyResource.setPropertyDescription(propertyUnit.getPropertyUnitDesc());
         propertyResource.setPropertyFeature(propertyUnit.getFeatures());
         propertyResource.setPropertyRent(propertyUnit.getRent());
