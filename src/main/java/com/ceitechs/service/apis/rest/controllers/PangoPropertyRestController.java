@@ -64,14 +64,11 @@ public class PangoPropertyRestController {
             @Valid PropertySearchCriteriaResource propertySearchCriteriaResource) {
         logger.info("getProperties : Header : " + userToken + " : " + userReferenceId);
         logger.info("getProperties : Request : " + propertySearchCriteriaResource);
-        PropertySearchCriteria searchCriteria = conversionService.convert(propertySearchCriteriaResource,
-                PropertySearchCriteria.class);
+        PropertySearchCriteria searchCriteria = conversionService.convert(propertySearchCriteriaResource, PropertySearchCriteria.class);
         List<GeoResult<PropertyUnit>> results = pangoDomainService.searchForProperties(searchCriteria, null);
         TypeDescriptor sourceType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(GeoResult.class));
-        TypeDescriptor targetType = TypeDescriptor.collection(List.class,
-                TypeDescriptor.valueOf(PropertyResource.class));
-        List<PropertyResource> target = (List<PropertyResource>) conversionService.convert(results, sourceType,
-                targetType);
+        TypeDescriptor targetType = TypeDescriptor.collection(List.class,TypeDescriptor.valueOf(PropertyResource.class));
+        List<PropertyResource> target = (List<PropertyResource>) conversionService.convert(results, sourceType,targetType);
         return ResponseEntity.ok(target);
     }
 

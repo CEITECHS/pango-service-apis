@@ -5,9 +5,14 @@ import com.ceitechs.domain.service.domain.Attachment;
 import com.ceitechs.domain.service.domain.PropertyFeature;
 import com.ceitechs.domain.service.domain.PropertyRent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 
@@ -18,8 +23,12 @@ import lombok.ToString;
 @Setter
 @ToString
 public class PropertyResource {
+    @JsonIgnore
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
     private String propertyReferenceId;
 
+    @JsonIgnore
     private String propertyUnitId;
 
     private String propertyDescription;
@@ -43,4 +52,13 @@ public class PropertyResource {
     private Address address;
 
     private String ownerReferenceId;
+
+    public void setAvailability(LocalDateTime date) {
+        StringBuilder availableDateStr = new StringBuilder();
+        if (date.isBefore(LocalDateTime.now()))
+            availableDateStr.append(" since ");
+        else
+            availableDateStr.append(" on  ");
+        this.availability = availableDateStr.append(date.format(formatter)).toString();
+    }
 }

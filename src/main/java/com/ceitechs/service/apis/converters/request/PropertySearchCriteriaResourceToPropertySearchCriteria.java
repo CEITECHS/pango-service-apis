@@ -24,14 +24,14 @@ public class PropertySearchCriteriaResourceToPropertySearchCriteria
         propertySearchCriteria.setLatitude(source.getLatitude());
         propertySearchCriteria.setLongitude(source.getLongitude());
         propertySearchCriteria.setMaxPrice(source.getMaxPrice());
-        propertySearchCriteria.setMinPrice(source.getMinPrice());
+        propertySearchCriteria.setMinPrice(source.getMinPrice() > 0? source.getMinPrice() : 1.0);
         propertySearchCriteria.setMoveInDateAsString(source.getMoveInDate());
-        propertySearchCriteria.setPropertyPupose(source.getPropertyPurpose());
+        propertySearchCriteria.setPropertyPupose(source.getPropertyPurpose().toUpperCase());
         propertySearchCriteria.setRadius(source.getRadius());
         propertySearchCriteria.setRoomsCount(source.getRoomsCount());
-        propertySearchCriteria.setPage(source.getPage());
-        propertySearchCriteria.setPageSize(source.getPageSize());
-        // Missing properties
+        if (source.getPage() > 0)propertySearchCriteria.setPage(source.getPage());
+        if (source.getPageSize() > 0)propertySearchCriteria.setPageSize(source.getPageSize());
+        //TODO: Missing properties
         propertySearchCriteria.setPropertyReferenceId("");
         propertySearchCriteria.setSearchDate(LocalDateTime.now());
         return propertySearchCriteria;

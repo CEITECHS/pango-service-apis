@@ -19,7 +19,6 @@ public class PropertyGeoResultToPropertyResource implements Converter<GeoResult<
         propertyResource.setCoverPhoto(propertyUnit.getCoverPhoto());
         propertyResource.setPropertyDescription(propertyUnit.getPropertyUnitDesc());
         propertyResource.setAddress(propertyUnit.getAddress());
-        propertyResource.setCoverPhoto(propertyUnit.getCoverPhoto());
         propertyResource.setListingFor(propertyUnit.getListingFor().name());
         propertyResource.setOwnerReferenceId(propertyUnit.getOwner().getUserReferenceId());
         propertyResource.setPropertyReferenceId(propertyUnit.getPropertyId());
@@ -30,7 +29,7 @@ public class PropertyGeoResultToPropertyResource implements Converter<GeoResult<
         propertyResource.setRating(propertyUnit.getPropertyRating());
 
         // Missing properties
-        propertyResource.setAvailability("");
+        propertyResource.setAvailability(propertyUnit.getNextAvailableDate());
         propertyResource.setReviewCount(0);
         return propertyResource;
     }

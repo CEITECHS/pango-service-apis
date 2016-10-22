@@ -48,7 +48,7 @@ public class PropertySearchCriteriaResource {
     
     private int pageSize;
 
-    private double minPrice;
+    private double minPrice = 1.0;
 
     private double maxPrice;
 
