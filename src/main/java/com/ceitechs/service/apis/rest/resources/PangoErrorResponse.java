@@ -1,9 +1,8 @@
 package com.ceitechs.service.apis.rest.resources;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,5 +40,6 @@ public class PangoErrorResponse {
         this.detail = statusPhrase;
         this.developerMessage = statusPhrase;
         this.status = statusCode;
+        this.timeStamp = System.currentTimeMillis();
     }
 }
