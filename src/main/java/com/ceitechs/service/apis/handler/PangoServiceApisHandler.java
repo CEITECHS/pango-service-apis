@@ -30,8 +30,7 @@ public class PangoServiceApisHandler {
      */
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<?> handleUserAlreadyExists(UserAlreadyExistsException uaee) {
-        PangoErrorResponse errorResponse = new PangoErrorResponse();
-        errorResponse.setTitle("User Already Exists.");
+        PangoErrorResponse errorResponse = new PangoErrorResponse(HttpStatus.CONFLICT.getReasonPhrase(),"USER_EXISTS_ERROR",HttpStatus.CONFLICT.value());
         errorResponse.setTimeStamp((new Date()).getTime());
         errorResponse.setStatus(HttpStatus.CONFLICT.value());
         errorResponse.setDetail(uaee.getMessage());
@@ -46,12 +45,12 @@ public class PangoServiceApisHandler {
      */
     @ExceptionHandler(FileUploadException.class)
     public ResponseEntity<?> handleFileUploadException(FileUploadException fue) {
-        PangoErrorResponse errorResponse = new PangoErrorResponse();
-        errorResponse.setTitle("Error while uploading the picture");
+        PangoErrorResponse errorResponse =  new PangoErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "VALIDATION_ERROR", HttpStatus.BAD_REQUEST.value());
         errorResponse.setTimeStamp((new Date()).getTime());
-        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
         errorResponse.setDetail(fue.getMessage());
         errorResponse.setDeveloperMessage("Error while uploading the picture");
+        errorResponse.addErrorMessage(fue.getMessage());
+        //TODO log this exception
         return new ResponseEntity<>(errorResponse, null, HttpStatus.BAD_REQUEST);
     }
 
@@ -62,24 +61,24 @@ public class PangoServiceApisHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleInputValidationError(MethodArgumentNotValidException manve) {
-        PangoErrorResponse errorResponse = new PangoErrorResponse();
-        errorResponse.setTitle("Input request validation failed.");
+        PangoErrorResponse errorResponse = new PangoErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "VALIDATION_ERROR", HttpStatus.BAD_REQUEST.value());
         errorResponse.setTimeStamp((new Date()).getTime());
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
         errorResponse.setDetail(manve.getMessage());
         errorResponse.setDeveloperMessage("Input request validation failed.");
-        List<FieldError> fieldErrors = manve.getBindingResult().getFieldErrors();
-        for (FieldError fieldError : fieldErrors) {
-            List<PangoValidationError> validationErrorList = errorResponse.getErrors().get(fieldError.getField());
-            if (validationErrorList == null) {
-                validationErrorList = new ArrayList<PangoValidationError>();
-                errorResponse.getErrors().put(fieldError.getField(), validationErrorList);
-            }
-            PangoValidationError validationError = new PangoValidationError();
-            validationError.setErrorCode(fieldError.getCode());
-            validationError.setErrorMessage(fieldError.getDefaultMessage());
-            validationErrorList.add(validationError);
-        }
+        manve.getBindingResult().getFieldErrors().forEach(e -> errorResponse.addErrorMessage(e.getDefaultMessage()));
+//        List<FieldError> fieldErrors = manve.getBindingResult().getFieldErrors();
+////        for (FieldError fieldError : fieldErrors) {
+////            List<PangoValidationError> validationErrorList = errorResponse.getErrors().get(fieldError.getField());
+////            if (validationErrorList == null) {
+////                validationErrorList = new ArrayList<PangoValidationError>();
+////                errorResponse.getErrors().put(fieldError.getField(), validationErrorList);
+////            }
+////            PangoValidationError validationError = new PangoValidationError();
+////            validationError.setErrorCode(fieldError.getCode());
+////            validationError.setErrorMessage(fieldError.getDefaultMessage());
+////            validationErrorList.add(validationError);
+////        }
         return new ResponseEntity<>(errorResponse, null, HttpStatus.BAD_REQUEST);
     }
 }
