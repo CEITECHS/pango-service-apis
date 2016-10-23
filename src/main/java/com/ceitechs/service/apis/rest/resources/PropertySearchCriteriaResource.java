@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import com.ceitechs.domain.service.domain.PropertyUnit;
 import com.ceitechs.service.apis.rest.resources.validators.StringEnumValidator;
+import com.ceitechs.service.apis.rest.resources.validators.StringFutureDateValidator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Getter;
@@ -24,20 +25,20 @@ import org.hibernate.validator.constraints.NotEmpty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PropertySearchCriteriaResource {
 
-    @NotNull
+    @NotNull(message = "longitude coordinate value can not be null")
     private double longitude;
 
-    @NotNull
+    @NotNull(message = "latitude coordinate value can not be null")
     private double latitude;
 
     @NotNull
-    @Min(value = 1,message = "Radius must be greater than zero")
+    @Min(value = 1,message = "radius value must be greater than zero")
     private int radius = 10;
 
     @StringEnumValidator(enumClass = PropertyUnit.PropertyPurpose.class, message = " propertyPurpose value is not valid, allowed values are [HOME, BUSINESS]"  )
     private String propertyPurpose = "HOME";
 
-    @NotNull
+    @StringFutureDateValidator(message = "moveInDate must be a future date")
     private String moveInDate = LocalDate.now().plusWeeks(2).toString();
 
     @NotNull
