@@ -35,6 +35,10 @@ public class PangoErrorResponse {
         errors.add(error);
     }
 
+    public void addErrorMessages(List<String> errors){
+        errors.forEach(e -> addErrorMessage(e));
+    }
+
     public PangoErrorResponse(String statusPhrase, String statusLabel, int statusCode) {
         this.title = statusLabel;
         this.detail = statusPhrase;

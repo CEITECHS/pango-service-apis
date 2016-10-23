@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.ceitechs.service.apis.handler.ExceptionHandlerUtil;
 import com.ceitechs.service.apis.rest.resources.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,10 +67,7 @@ public class PangoPropertyRestController {
         // dealing with 400s
         //TODO custom validation to insure that conversion will pass
         if (result.hasErrors()) {
-            PangoErrorResponse body = new PangoErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "VALIDATION_ERROR", HttpStatus.BAD_REQUEST.value());
-            result.getAllErrors().forEach(e -> body.addErrorMessage(e.getDefaultMessage()));
-            logger.debug(body.toString());
-            return ResponseEntity.badRequest().body(body);
+            return ExceptionHandlerUtil.handleException(HttpStatus.BAD_REQUEST, result, null);
         }
         try {
             PropertySearchCriteria searchCriteria = conversionService.convert(propertySearchCriteriaResource, PropertySearchCriteria.class);
@@ -79,10 +77,7 @@ public class PangoPropertyRestController {
             List<PropertyResource> target = (List<PropertyResource>) conversionService.convert(results, sourceType, targetType);
             return ResponseEntity.ok(target);
         } catch (Exception ex) {
-            PangoErrorResponse body = new PangoErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), "SERVER_ERROR", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            body.setDeveloperMessage(ex.getMessage());
-            logger.error(ex.getMessage(), ex.getCause());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+            return ExceptionHandlerUtil.handleException(HttpStatus.INTERNAL_SERVER_ERROR, null, ex);
         }
     }
 

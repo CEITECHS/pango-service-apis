@@ -1,28 +1,27 @@
 package com.ceitechs.service.apis.handler;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.ceitechs.service.apis.exception.FileUploadException;
 import com.ceitechs.service.apis.exception.UserAlreadyExistsException;
 import com.ceitechs.service.apis.rest.resources.PangoErrorResponse;
-import com.ceitechs.service.apis.rest.resources.PangoValidationError;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * 
  * @author abhisheksingh -
  * @since 1.0
  */
-@ControllerAdvice
-public class PangoServiceApisHandler {
+//TODO : Issue not firing. see ExceptionHandlerUtil - workaround
+//@ControllerAdvice
+//@RestController
+public class PangoServiceApisHandler{
+    //xtends ResponseEntityExceptionHandler
 
     /**
      * @param uaee
@@ -59,19 +58,20 @@ public class PangoServiceApisHandler {
      * @param manve
      * @return
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<?> handleInputValidationError(MethodArgumentNotValidException manve) {
         PangoErrorResponse errorResponse = new PangoErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "VALIDATION_ERROR", HttpStatus.BAD_REQUEST.value());
         errorResponse.setTimeStamp((new Date()).getTime());
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
         errorResponse.setDetail(manve.getMessage());
         errorResponse.setDeveloperMessage("Input request validation failed.");
-        manve.getBindingResult().getFieldErrors().forEach(e -> errorResponse.addErrorMessage(e.getDefaultMessage()));
+        manve.getBindingResult().getAllErrors().forEach(e -> errorResponse.addErrorMessage(e.getDefaultMessage()));
 //        List<FieldError> fieldErrors = manve.getBindingResult().getFieldErrors();
 ////        for (FieldError fieldError : fieldErrors) {
 ////            List<PangoValidationError> validationErrorList = errorResponse.getErrors().get(fieldError.getField());
 ////            if (validationErrorList == null) {
-////                validationErrorList = new ArrayList<PangoValidationError>();
+////                validationErrorList = new ArrayLis t<PangoValidationError>();
 ////                errorResponse.getErrors().put(fieldError.getField(), validationErrorList);
 ////            }
 ////            PangoValidationError validationError = new PangoValidationError();
