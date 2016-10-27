@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
@@ -32,7 +33,7 @@ import com.ceitechs.service.apis.converters.response.UserPreferenceToUserPrefere
  * @author abhisheksingh -
  * @since 1.0
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = VelocityAutoConfiguration.class)
 @EnablePangoDomainService
 public class PangoServiceApisApplication {
 

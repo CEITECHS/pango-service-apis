@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * 
@@ -27,11 +28,11 @@ public class UserResource {
     private String userReferenceId;
 
     @JsonProperty("firstName")
-    @NotNull
+    @NotEmpty(message = "firstName is can not be null or empty")
     private String firstName;
 
     @JsonProperty("lastName")
-    @NotNull
+    @NotEmpty(message = "lastName is can not be null or empty")
     private String lastName;
 
     @JsonProperty("phoneNumber")
@@ -39,13 +40,18 @@ public class UserResource {
     private String phoneNumber;
 
     @JsonProperty("password")
-    @NotNull
+    @NotEmpty(message = "password can not be null or empty")
     private String password;
 
     @JsonProperty("emailAddress")
     @NotNull
-    @Email
+    @Email(message = "emailAddress must be a valid email")
     private String emailAddress;
+
+    @JsonProperty("emailAddress2")
+    @NotNull
+    @Email(message = "emailAddress must be a valid email")
+    private String emailAddress2;
 
     @JsonProperty("address")
     @NotNull
