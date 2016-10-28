@@ -17,7 +17,6 @@ public class UserProjectionToProjectionResource implements Converter<UserProject
         resource.setLastName(userProjection.getLastName());
         resource.setFullName(userProjection.getFullName());
         resource.setPhoneNumber(userProjection.getPhoneNumber());
-       // resource.setCustomerRating(userProjection.geC);
         resource.setAddress(userProjection.getAddress());
         resource.setProfilePicture(userProjection.getProfilePicture());
         resource.setEmailAddress(userProjection.getEmailAddress());
