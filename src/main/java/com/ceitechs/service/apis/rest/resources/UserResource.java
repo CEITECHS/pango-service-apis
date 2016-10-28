@@ -43,15 +43,15 @@ public class UserResource {
     @NotEmpty(message = "password can not be null or empty")
     private String password;
 
+    @JsonProperty("confirmationPassword")
+    @NotEmpty(message = "confirmation password can not be null or empty")
+    private String confirmationPassword;
+
     @JsonProperty("emailAddress")
     @NotNull
     @Email(message = "emailAddress must be a valid email")
     private String emailAddress;
 
-    @JsonProperty("emailAddress2")
-    @NotNull
-    @Email(message = "emailAddress must be a valid email")
-    private String emailAddress2;
 
     @JsonProperty("address")
     @NotNull

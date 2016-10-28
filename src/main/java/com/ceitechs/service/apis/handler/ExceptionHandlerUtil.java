@@ -21,7 +21,8 @@ public class ExceptionHandlerUtil {
 
     public enum ERRORS_TAGS {
         VALIDATION_ERROR,
-        INTERNAL_SERVER_ERROR
+        INTERNAL_SERVER_ERROR,
+        USER_WITH_EMAIL_DOES_EXIST
     }
 
     /**
@@ -33,23 +34,34 @@ public class ExceptionHandlerUtil {
      */
     public static ResponseEntity<?> handleException(HttpStatus status, BindingResult result, Exception ex) {
         PangoErrorResponse errorResponse = null;
-        //handles 400
-        if (status.equals(HttpStatus.BAD_REQUEST)) {
-            errorResponse = new PangoErrorResponse(status.getReasonPhrase(), ERRORS_TAGS.VALIDATION_ERROR.name(), status.value());
-            if (result != null && result.hasErrors()) {
-                errorResponse.addErrorMessages(result.getAllErrors().stream()
-                        .map(ObjectError::getDefaultMessage)
-                        .collect(Collectors.toList())
-                );
-            }
-            logger.debug(errorResponse.toString());
-        }
+        switch (Integer.valueOf(status.value())) {
+            //handles 400
+            case 400:
+                errorResponse = new PangoErrorResponse(status.getReasonPhrase(), ERRORS_TAGS.VALIDATION_ERROR.name(), status.value());
+                if (result != null && result.hasErrors()) {
+                    errorResponse.addErrorMessages(result.getAllErrors().stream()
+                            .map(ObjectError::getDefaultMessage)
+                            .collect(Collectors.toList())
+                    );
+                }
+                logger.debug(errorResponse.toString());
+                break;
 
-        // handles 500
-        if (status.equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
-            errorResponse = new PangoErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), ERRORS_TAGS.INTERNAL_SERVER_ERROR.name(), HttpStatus.INTERNAL_SERVER_ERROR.value());
-            errorResponse.setDeveloperMessage(ex.getMessage());
-            logger.error(ex.getMessage(), ex.getCause());
+            case 409:
+                errorResponse = new PangoErrorResponse(HttpStatus.CONFLICT.getReasonPhrase(), ERRORS_TAGS.USER_WITH_EMAIL_DOES_EXIST.name(), HttpStatus.CONFLICT.value());
+                errorResponse.setDeveloperMessage(ex.getMessage());
+                logger.error(ex.getMessage(), ex.getCause());
+                break;
+
+            // handles 500
+             default:
+                errorResponse = new PangoErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), ERRORS_TAGS.INTERNAL_SERVER_ERROR.name(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+                errorResponse.setDeveloperMessage(ex.getMessage());
+                logger.error(ex.getMessage(), ex.getCause());
+                break;
+
+
+
         }
         return ResponseEntity.status(status).body(errorResponse);
     }

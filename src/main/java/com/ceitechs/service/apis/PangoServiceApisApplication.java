@@ -3,6 +3,7 @@ package com.ceitechs.service.apis;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.ceitechs.service.apis.converters.response.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
@@ -20,13 +21,6 @@ import com.ceitechs.service.apis.converters.request.ReviewResourceToReview;
 import com.ceitechs.service.apis.converters.request.UserPreferenceResourceToUserPreference;
 import com.ceitechs.service.apis.converters.request.UserProfileResourceToUserProfile;
 import com.ceitechs.service.apis.converters.request.UserResourceToUser;
-import com.ceitechs.service.apis.converters.response.PropertyGeoResultToPropertyResource;
-import com.ceitechs.service.apis.converters.response.PropertyUnitEnquiryToEnquiryResource;
-import com.ceitechs.service.apis.converters.response.PropertyUnitToPropertyDetailResource;
-import com.ceitechs.service.apis.converters.response.ReviewToReviewResource;
-import com.ceitechs.service.apis.converters.response.UnitHoldingHistoryToUnitHoldingHistoryResource;
-import com.ceitechs.service.apis.converters.response.UnitRentalHistoryToUnitRentalHistoryResource;
-import com.ceitechs.service.apis.converters.response.UserPreferenceToUserPreferenceResource;
 
 /**
  * 
@@ -67,6 +61,7 @@ public class PangoServiceApisApplication {
         converters.add(new EnquiryResourceToPropertyUnitEnquiry());
         converters.add(new PropertyUnitEnquiryToEnquiryResource());
         converters.add(new CorrespondenceResourceToEnquiryCorrespondence());
+        converters.add(new UserProjectionToProjectionResource());
         return converters;
     }
 }
