@@ -30,11 +30,11 @@ public class UserResource {
     private String userReferenceId;
 
     @JsonProperty("firstName")
-    @NotEmpty(message = "firstName is can not be null or empty")
+    @NotEmpty(message = "firstName can not be null or empty")
     private String firstName;
 
     @JsonProperty("lastName")
-    @NotEmpty(message = "lastName is can not be null or empty")
+    @NotEmpty(message = "lastName can not be null or empty")
     private String lastName;
 
     @JsonProperty("phoneNumber")
