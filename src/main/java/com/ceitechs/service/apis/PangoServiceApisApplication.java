@@ -21,12 +21,21 @@ import com.ceitechs.service.apis.converters.request.ReviewResourceToReview;
 import com.ceitechs.service.apis.converters.request.UserPreferenceResourceToUserPreference;
 import com.ceitechs.service.apis.converters.request.UserProfileResourceToUserProfile;
 import com.ceitechs.service.apis.converters.request.UserResourceToUser;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.DispatcherServlet;
 
 /**
  * 
  * @author abhisheksingh -
  * @since 1.0
  */
+@Controller
 @SpringBootApplication(exclude = VelocityAutoConfiguration.class)
 @EnablePangoDomainService
 public class PangoServiceApisApplication {
@@ -63,5 +72,28 @@ public class PangoServiceApisApplication {
         converters.add(new CorrespondenceResourceToEnquiryCorrespondence());
         converters.add(new UserProjectionToProjectionResource());
         return converters;
+    }
+
+    @RequestMapping(value = {"/**"}, method = RequestMethod.OPTIONS)
+    ResponseEntity<Void> getProposalsOptions() {
+        return allows(HttpMethod.GET, HttpMethod.POST,HttpMethod.PUT,HttpMethod.DELETE,HttpMethod.OPTIONS);
+
+    }
+
+    public static ResponseEntity<Void> allows(HttpMethod... methods) {
+        HttpHeaders headers = new HttpHeaders();
+        Set<HttpMethod> allow = new HashSet<>();
+        for (HttpMethod method : methods) {
+            allow.add(method);
+        }
+        headers.setAllow(allow);
+        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
+    }
+
+    @Bean
+    public DispatcherServlet dispatcherServlet() {
+        DispatcherServlet servlet = new DispatcherServlet();
+        servlet.setDispatchOptionsRequest(true);
+        return servlet;
     }
 }
