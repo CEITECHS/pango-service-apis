@@ -5,7 +5,9 @@ import java.util.Set;
 
 import com.ceitechs.service.apis.converters.response.*;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.autoconfigure.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ConversionServiceFactoryBean;
@@ -36,7 +38,11 @@ import org.springframework.web.servlet.DispatcherServlet;
  * @since 1.0
  */
 @Controller
-@SpringBootApplication(exclude = VelocityAutoConfiguration.class)
+@SpringBootApplication(exclude = {
+        VelocityAutoConfiguration.class,
+        SecurityAutoConfiguration.class,
+        ManagementWebSecurityAutoConfiguration.class
+})
 @EnablePangoDomainService
 public class PangoServiceApisApplication {
 

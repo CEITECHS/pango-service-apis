@@ -48,6 +48,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.ceitechs</groupId>
             <artifactId>pango-domain-starter</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -58,11 +68,6 @@
             <artifactId>pango-domain-autoconfigure</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.ceitechs</groupId>-->
-            <!--<artifactId>pango-domain-service</artifactId>-->
-            <!--<version>1.0.0-SNAPSHOT</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
