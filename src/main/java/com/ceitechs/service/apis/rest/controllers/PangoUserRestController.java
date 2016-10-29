@@ -8,9 +8,6 @@ import java.util.stream.IntStream;
 
 import javax.validation.Valid;
 
-import com.ceitechs.domain.service.service.UserProjection;
-import com.ceitechs.service.apis.handler.ExceptionHandlerUtil;
-import com.ceitechs.service.apis.rest.resources.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +36,15 @@ import com.ceitechs.domain.service.domain.UserSearchHistory;
 import com.ceitechs.domain.service.domain.UserUpdating;
 import com.ceitechs.domain.service.service.EntityExists;
 import com.ceitechs.domain.service.service.PangoDomainService;
+import com.ceitechs.domain.service.service.UserProjection;
 import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.exception.UserAlreadyExistsException;
+import com.ceitechs.service.apis.handler.ExceptionHandlerUtil;
+import com.ceitechs.service.apis.rest.resources.LoginResource;
+import com.ceitechs.service.apis.rest.resources.UserPreferenceResource;
+import com.ceitechs.service.apis.rest.resources.UserProfileResource;
+import com.ceitechs.service.apis.rest.resources.UserProjectionResource;
+import com.ceitechs.service.apis.rest.resources.UserResource;
 
 /**
  * 
@@ -64,9 +68,8 @@ public class PangoUserRestController {
      * 
      * @return
      */
-    @RequestMapping(value = "/users", method = RequestMethod.POST,
-            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE},
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/users", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE,
+            MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createUser(@Valid @RequestBody UserResource userResource, BindingResult result) {
         logger.debug("createUser : Request : " + userResource);
         if (result.hasErrors()) {
@@ -77,14 +80,18 @@ public class PangoUserRestController {
             Optional<UserProjection> userProjection = pangoDomainService.registerUser(user);
             if (userProjection.isPresent()) {
                 logger.debug("User '" + user.getEmailAddress() + "' created successfully.");
-                return ResponseEntity.status(HttpStatus.CREATED).body(conversionService.convert(userProjection.get(), UserProjectionResource.class));
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(conversionService.convert(userProjection.get(), UserProjectionResource.class));
             } else
-                throw new Exception(String.format("User : %s was not created, because of a server issue ", user.getEmailAddress()));
+                throw new Exception(
+                        String.format("User : %s was not created, because of a server issue ", user.getEmailAddress()));
 
         } catch (EntityExists | Exception ee) {
-            return  ee instanceof  EntityExists ? ExceptionHandlerUtil.handleException(HttpStatus.CONFLICT, null,
-                    new UserAlreadyExistsException(String.format("User with an email address : %s , already exists", userResource.getEmailAddress())))
-                    : ExceptionHandlerUtil.handleException(HttpStatus.INTERNAL_SERVER_ERROR, null, new Exception(ee.getMessage(), ee.getCause()));
+            return ee instanceof EntityExists ? ExceptionHandlerUtil.handleException(HttpStatus.CONFLICT, null,
+                    new UserAlreadyExistsException(String.format("User with an email address : %s , already exists",
+                            userResource.getEmailAddress())))
+                    : ExceptionHandlerUtil.handleException(HttpStatus.INTERNAL_SERVER_ERROR, null,
+                            new Exception(ee.getMessage(), ee.getCause()));
         }
     }
 
@@ -246,10 +253,24 @@ public class PangoUserRestController {
      * 
      * @param confirmationToken
      * @return
+     * @throws Exception
      */
-    @RequestMapping(value = "/verify/confirmAccount", method = RequestMethod.GET)
+    @RequestMapping(value = "/verify/confirmAccount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> verifyUser(@RequestParam("confirm-token") String confirmationToken) {
         logger.info("verifyUser : Request Params : " + confirmationToken);
-        return ResponseEntity.ok("Ok, User verified.");
+        Optional<UserProjection> userProjection = null;
+        try {
+            userProjection = pangoDomainService.verifyUserAccountBy(confirmationToken);
+            if (userProjection.isPresent()) {
+                logger.debug("User '" + userProjection.get().getEmailAddress() + "' verified successfully.");
+                return ResponseEntity.ok("Ok, User verified.");
+            } else {
+                throw new Exception("User verification failed because of server error.");
+            }
+        } catch (IllegalStateException ise) {
+            return ExceptionHandlerUtil.handleException(HttpStatus.BAD_REQUEST, null, ise);
+        } catch (Exception ex) {
+            return ExceptionHandlerUtil.handleException(HttpStatus.INTERNAL_SERVER_ERROR, null, ex);
+        }
     }
 }
