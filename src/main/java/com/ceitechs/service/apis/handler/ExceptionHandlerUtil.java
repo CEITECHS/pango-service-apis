@@ -26,10 +26,9 @@ public class ExceptionHandlerUtil {
     }
 
     /**
-     *
      * @param status
      * @param result optional, required for validation like errors
-     * @param ex optional, required for server like errors
+     * @param ex     optional, required for server like errors
      * @return
      */
     public static ResponseEntity<?> handleException(HttpStatus status, BindingResult result, Exception ex) {
@@ -43,8 +42,11 @@ public class ExceptionHandlerUtil {
                             .map(ObjectError::getDefaultMessage)
                             .collect(Collectors.toList())
                     );
+                    logger.debug(errorResponse.toString());
+                } else {
+                    errorResponse.setDeveloperMessage(ex.getMessage());
+                    logger.error(ex.getMessage(), ex.getCause());
                 }
-                logger.debug(errorResponse.toString());
                 break;
 
             case 409:
@@ -54,12 +56,11 @@ public class ExceptionHandlerUtil {
                 break;
 
             // handles 500
-             default:
+            default:
                 errorResponse = new PangoErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), ERRORS_TAGS.INTERNAL_SERVER_ERROR.name(), HttpStatus.INTERNAL_SERVER_ERROR.value());
                 errorResponse.setDeveloperMessage(ex.getMessage());
                 logger.error(ex.getMessage(), ex.getCause());
                 break;
-
 
 
         }
