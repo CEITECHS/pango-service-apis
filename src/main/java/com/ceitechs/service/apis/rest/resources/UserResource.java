@@ -2,6 +2,7 @@ package com.ceitechs.service.apis.rest.resources;
 
 import javax.validation.constraints.NotNull;
 
+import com.ceitechs.service.apis.rest.resources.validators.FieldMatch;
 import org.hibernate.validator.constraints.Email;
 
 import com.ceitechs.domain.service.domain.Address;
@@ -23,6 +24,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Setter
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
+@FieldMatch(first = "password", second = "confirmPassword", message = "The password fields must match")
 public class UserResource {
 
     private String userReferenceId;
@@ -43,15 +45,14 @@ public class UserResource {
     @NotEmpty(message = "password can not be null or empty")
     private String password;
 
-    @JsonProperty("confirmationPassword")
+    @JsonProperty("confirmPassword")
     @NotEmpty(message = "confirmation password can not be null or empty")
-    private String confirmationPassword;
+    private String confirmPassword;
 
     @JsonProperty("emailAddress")
     @NotNull
     @Email(message = "emailAddress must be a valid email")
     private String emailAddress;
-
 
     @JsonProperty("address")
     @NotNull
