@@ -1,5 +1,7 @@
 package com.ceitechs.service.apis.rest.controllers;
 
+import org.springframework.stereotype.Component;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -10,7 +12,7 @@ import java.io.IOException;
  * @since 1.0
  */
 
-@
+@Component
 public class SimpleCORSFilter implements Filter {
 
 
