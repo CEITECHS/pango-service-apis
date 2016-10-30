@@ -1,13 +1,11 @@
 package com.ceitechs.service.apis.rest.controllers;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
-import com.ceitechs.service.apis.handler.ExceptionHandlerUtil;
-import com.ceitechs.service.apis.rest.resources.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +23,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ceitechs.domain.service.domain.ListingFor;
 import com.ceitechs.domain.service.domain.PropertySearchCriteria;
 import com.ceitechs.domain.service.domain.PropertyUnit;
 import com.ceitechs.domain.service.domain.User;
 import com.ceitechs.domain.service.service.PangoDomainService;
+import com.ceitechs.service.apis.handler.ExceptionHandlerUtil;
+import com.ceitechs.service.apis.rest.resources.PropertyDetailResource;
+import com.ceitechs.service.apis.rest.resources.PropertyResource;
+import com.ceitechs.service.apis.rest.resources.PropertySearchCriteriaResource;
+import com.ceitechs.service.apis.rest.resources.UserRentResource;
 
 /**
  * 
@@ -59,22 +61,25 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties", method = RequestMethod.GET)
     public ResponseEntity<?> getProperties(@RequestHeader(required = false, value = "user-token") String userToken,
-                                           @RequestHeader(required = false) String userReferenceId,
-                                           @Valid PropertySearchCriteriaResource propertySearchCriteriaResource, BindingResult result) {
+            @RequestHeader(required = false) String userReferenceId,
+            @Valid PropertySearchCriteriaResource propertySearchCriteriaResource, BindingResult result) {
 
         logger.debug("getProperties : Header : " + userToken + " : " + userReferenceId);
         logger.debug("getProperties : Request : " + propertySearchCriteriaResource);
         // dealing with 400s
-        //TODO custom validation to insure that conversion will pass
+        // TODO custom validation to insure that conversion will pass
         if (result.hasErrors()) {
             return ExceptionHandlerUtil.handleException(HttpStatus.BAD_REQUEST, result, null);
         }
         try {
-            PropertySearchCriteria searchCriteria = conversionService.convert(propertySearchCriteriaResource, PropertySearchCriteria.class);
+            PropertySearchCriteria searchCriteria = conversionService.convert(propertySearchCriteriaResource,
+                    PropertySearchCriteria.class);
             List<GeoResult<PropertyUnit>> results = pangoDomainService.searchForProperties(searchCriteria, null);
             TypeDescriptor sourceType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(GeoResult.class));
-            TypeDescriptor targetType = TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(PropertyResource.class));
-            List<PropertyResource> target = (List<PropertyResource>) conversionService.convert(results, sourceType, targetType);
+            TypeDescriptor targetType = TypeDescriptor.collection(List.class,
+                    TypeDescriptor.valueOf(PropertyResource.class));
+            List<PropertyResource> target = (List<PropertyResource>) conversionService.convert(results, sourceType,
+                    targetType);
             return ResponseEntity.ok(target);
         } catch (Exception ex) {
             return ExceptionHandlerUtil.handleException(HttpStatus.INTERNAL_SERVER_ERROR, null, ex);
@@ -90,8 +95,7 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties", method = RequestMethod.POST)
     public ResponseEntity<?> createProperty(@RequestHeader(value = "user-token") String userToken,
-                                            @RequestHeader String userReferenceId,
-                                            @Valid @RequestBody PropertyDetailResource propertyDetailResource) {
+            @RequestHeader String userReferenceId, @Valid @RequestBody PropertyDetailResource propertyDetailResource) {
         logger.info("createProperty : Header Params : " + userToken + " : " + userReferenceId);
         logger.info("createProperty : Request Params : " + propertyDetailResource);
         PropertyUnit propertyUnit = conversionService.convert(propertyDetailResource, PropertyUnit.class);
@@ -112,9 +116,7 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties/list", method = RequestMethod.GET)
     public ResponseEntity<?> getUserPropertiesByStatus(@RequestHeader(value = "user-token") String userToken,
-                                                       @RequestHeader String userReferenceId,
-                                                       @RequestParam String status,
-                                                       @RequestParam String by) {
+            @RequestHeader String userReferenceId, @RequestParam String status, @RequestParam String by) {
         logger.info(
                 "getUserPropertiesByStatus : Request Params : " + userToken + " : " + userReferenceId + " : " + status);
         List<GeoResult<PropertyUnit>> results = new ArrayList<>();
@@ -139,9 +141,7 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties/pending/list", method = RequestMethod.GET)
     public ResponseEntity<?> getPendingPropertiesList(@RequestHeader(value = "user-token") String userToken,
-                                                      @RequestHeader String userReferenceId,
-                                                      @RequestParam String referenceId,
-                                                      @RequestParam String by) {
+            @RequestHeader String userReferenceId, @RequestParam String referenceId, @RequestParam String by) {
         logger.info("getPendingPropertiesList : Request Params : " + userToken + " : " + userReferenceId + " : "
                 + referenceId + " : " + by);
         List<GeoResult<PropertyUnit>> results = new ArrayList<>();
@@ -163,16 +163,26 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties/{propertyReferenceId}", method = RequestMethod.GET)
     public ResponseEntity<?> getPropertyUnit(@RequestHeader(value = "user-token") String userToken,
-                                             @RequestHeader String userReferenceId,
-                                             @PathVariable String propertyReferenceId) {
+            @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId) {
         logger.info("getPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
-        PropertyUnit propertyUnit = new PropertyUnit();
-        propertyUnit.setListingFor(ListingFor.RENT);
-        propertyUnit.setOwner(new User());
-        propertyUnit.setNextAvailableDate(LocalDateTime.now().plusDays(10));
-        PropertyDetailResource propertyDetailResource = conversionService.convert(propertyUnit,
-                PropertyDetailResource.class);
-        return ResponseEntity.ok(propertyDetailResource);
+        try {
+            User user = new User();
+            PropertyDetailResource propertyDetailResource = null;
+            user.setUserReferenceId(userReferenceId);
+            Optional<PropertyUnit> propertyUnit = pangoDomainService.retrievePropertyBy(propertyReferenceId, user);
+            if (propertyUnit.isPresent()) {
+                propertyDetailResource = conversionService.convert(propertyUnit.get(), PropertyDetailResource.class);
+                return ResponseEntity.ok(propertyDetailResource);
+            } else {
+                logger.info(String.format("Property with propertyReferenceId : %s not found. ", propertyReferenceId));
+                return new ResponseEntity<>(
+                        String.format("Property with propertyReferenceId : %s not found. ", propertyReferenceId),
+                        HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ExceptionHandlerUtil.handleException(HttpStatus.INTERNAL_SERVER_ERROR, null, ex);
+        }
     }
 
     /**
@@ -186,9 +196,8 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties/{propertyReferenceId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updatePropertyUnit(@RequestHeader(value = "user-token") String userToken,
-                                                @RequestHeader String userReferenceId,
-                                                @PathVariable String propertyReferenceId,
-                                                @Valid @RequestBody PropertyDetailResource propertyDetailResource) {
+            @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId,
+            @Valid @RequestBody PropertyDetailResource propertyDetailResource) {
         logger.info(
                 "updatePropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
         PropertyUnit propertyUnit = conversionService.convert(propertyDetailResource, PropertyUnit.class);
@@ -207,9 +216,8 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties/{propertyReferenceId}/rent", method = RequestMethod.PUT)
     public ResponseEntity<?> rentPropertyUnit(@RequestHeader(value = "user-token") String userToken,
-                                              @RequestHeader String userReferenceId,
-                                              @PathVariable String propertyReferenceId,
-                                              @Valid @RequestBody UserRentResource userRentResource) {
+            @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId,
+            @Valid @RequestBody UserRentResource userRentResource) {
         logger.info("rentPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId
                 + " : " + userRentResource);
         return ResponseEntity.ok("Ok, the Pango rental unit has been updated successfully with the rental details");
@@ -231,8 +239,7 @@ public class PangoPropertyRestController {
      */
     @RequestMapping(value = "/properties/{propertyReferenceId}/hold", method = RequestMethod.PUT)
     public ResponseEntity<?> holdPropertyUnit(@RequestHeader(value = "user-token") String userToken,
-                                              @RequestHeader String userReferenceId,
-                                              @PathVariable String propertyReferenceId) {
+            @RequestHeader String userReferenceId, @PathVariable String propertyReferenceId) {
         logger.info(
                 "holdPropertyUnit : Request : " + userToken + " : " + userReferenceId + " : " + propertyReferenceId);
         return ResponseEntity.ok("Ok, the Pango rental unit has been updated successfully with the holding details");
