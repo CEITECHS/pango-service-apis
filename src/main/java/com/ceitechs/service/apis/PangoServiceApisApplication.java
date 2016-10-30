@@ -30,6 +30,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,6 +41,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
  * 
@@ -53,8 +55,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
         ManagementWebSecurityAutoConfiguration.class
 })
 @EnablePangoDomainService
+@EnableAsync
 public class PangoServiceApisApplication {
-
 
     public static void main(String[] args) {
         SpringApplication.run(PangoServiceApisApplication.class, args);
@@ -127,5 +129,6 @@ public class PangoServiceApisApplication {
         bean.setOrder(0);
         return bean;
     }
+
 
 }
