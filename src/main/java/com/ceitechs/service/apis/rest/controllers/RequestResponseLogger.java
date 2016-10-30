@@ -2,6 +2,7 @@ package com.ceitechs.service.apis.rest.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author iddymagohe on 10/29/16.
  * @since 1.0
  */
+@Component
 public class RequestResponseLogger extends HandlerInterceptorAdapter {
 
     Logger logger= LoggerFactory.getLogger(RequestResponseLogger.class);

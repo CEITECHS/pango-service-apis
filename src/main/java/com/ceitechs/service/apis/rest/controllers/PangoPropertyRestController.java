@@ -174,7 +174,7 @@ public class PangoPropertyRestController {
                 propertyDetailResource = conversionService.convert(propertyUnit.get(), PropertyDetailResource.class);
                 return ResponseEntity.ok(propertyDetailResource);
             } else {
-                logger.info(String.format("Property with propertyReferenceId : %s not found. ", propertyReferenceId));
+                logger.debug(String.format("Property with propertyReferenceId : %s not found. ", propertyReferenceId));
                 return new ResponseEntity<>(
                         String.format("Property with propertyReferenceId : %s not found. ", propertyReferenceId),
                         HttpStatus.NOT_FOUND);
