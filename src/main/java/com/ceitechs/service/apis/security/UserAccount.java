@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * @author iddymagohe on 10/29/16.
  * @since 1.0
  */
-public class UserAccount implements UserDetails {
+public class UserAccount implements PangoUserDetails {
 
     private final User account;
 
@@ -54,5 +54,20 @@ public class UserAccount implements UserDetails {
     @Override
     public boolean isEnabled() {
         return account.getProfile().isVerified();
+    }
+
+    @Override
+    public String getFirstName() {
+        return account.getFirstName();
+    }
+
+    @Override
+    public String getLastName() {
+        return account.getLastName();
+    }
+
+    @Override
+    public String getUserReferenceId() {
+        return account.getUserReferenceId();
     }
 }

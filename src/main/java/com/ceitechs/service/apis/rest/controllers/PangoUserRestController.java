@@ -8,14 +8,17 @@ import java.util.stream.IntStream;
 
 import javax.validation.Valid;
 
+import com.ceitechs.service.apis.rest.resources.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
@@ -40,11 +43,6 @@ import com.ceitechs.domain.service.service.UserProjection;
 import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.exception.UserAlreadyExistsException;
 import com.ceitechs.service.apis.handler.ExceptionHandlerUtil;
-import com.ceitechs.service.apis.rest.resources.LoginResource;
-import com.ceitechs.service.apis.rest.resources.UserPreferenceResource;
-import com.ceitechs.service.apis.rest.resources.UserProfileResource;
-import com.ceitechs.service.apis.rest.resources.UserProjectionResource;
-import com.ceitechs.service.apis.rest.resources.UserResource;
 
 /**
  * 
@@ -62,6 +60,10 @@ public class PangoUserRestController {
     @Autowired
     PangoDomainService pangoDomainService;
 
+    @Autowired
+    @Lazy(true)
+    PasswordEncoder passwordEncryptor;
+
     /**
      * This endpoint will create a new Pango user, an email with verification link will be sent to the registered email
      * address
@@ -77,6 +79,7 @@ public class PangoUserRestController {
         }
         try {
             User user = conversionService.convert(userResource, User.class);
+            user.getProfile().setPassword(passwordEncryptor.encode(user.getProfile().getPassword()));
             Optional<UserProjection> userProjection = pangoDomainService.registerUser(user);
             if (userProjection.isPresent()) {
                 logger.debug("User '" + user.getEmailAddress() + "' created successfully.");
@@ -230,23 +233,7 @@ public class PangoUserRestController {
         return ResponseEntity.ok("Ok, successfully updated the preference");
     }
 
-    /**
-     * This endpoint will authenticate a pango user with supplied emailAddress and password, an expiring access token is
-     * returned along side the firstname, lastname as well the userReferenceId
-     * 
-     * @param login
-     * @return
-     */
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> authenticate(@Valid @RequestBody LoginResource loginResource) {
-        logger.info("authenticate : User Authentication Request : " + loginResource);
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.set("user-token", PangoUtility.generateIdAsString());
-        headers.set("userReferenceId", PangoUtility.generateIdAsString());
-        headers.set("lastName", "lName");
-        headers.set("firstName", "fName");
-        return new ResponseEntity<>(headers, HttpStatus.OK);
-    }
+
 
     /**
      * This endpoint will verify a pango user with supplied access token
@@ -255,15 +242,15 @@ public class PangoUserRestController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/verify/confirmAccount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> verifyUser(@RequestParam("confirm-token") String confirmationToken) {
+    @RequestMapping(value = "/account-verification/{confirm-token}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> verifyUser(@PathVariable("confirm-token") String confirmationToken) {
         logger.info("verifyUser : Request Params : " + confirmationToken);
         Optional<UserProjection> userProjection = null;
         try {
             userProjection = pangoDomainService.verifyUserAccountBy(confirmationToken);
             if (userProjection.isPresent()) {
                 logger.debug("User '" + userProjection.get().getEmailAddress() + "' verified successfully.");
-                return ResponseEntity.ok("Ok, User verified.");
+                return ResponseEntity.ok(new MessageResource("User verified., can now proceed to login  with userName : " + userProjection.get().getEmailAddress()));
             } else {
                 throw new Exception("User verification failed because of server error.");
             }

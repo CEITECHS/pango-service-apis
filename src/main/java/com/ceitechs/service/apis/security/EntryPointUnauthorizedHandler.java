@@ -2,6 +2,7 @@ package com.ceitechs.service.apis.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import java.io.IOException;
 /**
  * @author iddymagohe on 10/29/16.
  */
+@Component
 public class EntryPointUnauthorizedHandler implements AuthenticationEntryPoint{
 
     @Override
