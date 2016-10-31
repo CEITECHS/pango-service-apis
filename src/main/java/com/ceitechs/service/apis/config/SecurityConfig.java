@@ -28,9 +28,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
-    @Value("${server.context-path}")
-    private String serverContextPath;
-
     @Autowired
     private AuthFailure authFailure;
 
