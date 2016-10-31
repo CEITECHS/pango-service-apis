@@ -1,5 +1,6 @@
 package com.ceitechs.service.apis.rest.resources;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,10 +10,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@JsonPropertyOrder({"title", "message"})
 public class MessageResource {
     private String message;
 
-    public MessageResource(String txt) {
+    private String title;
+
+    public MessageResource(String txt, String tag) {
         message = txt;
+        title = tag;
     }
 }

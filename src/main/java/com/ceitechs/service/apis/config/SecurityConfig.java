@@ -12,7 +12,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Value("${server.context-path}")
@@ -61,30 +65,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
+            http.csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
-                //.addFilterAfter(authTokenProcessingFilter)
                 .addFilter(authTokenProcessingFilter)
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST,  "apis/v1/authenticate").permitAll() //Authentication
-                .antMatchers(HttpMethod.GET, serverContextPath + "/account-verification/*").permitAll() // Account verification
-                .antMatchers(HttpMethod.OPTIONS, serverContextPath + "/**").permitAll()//allow CORS option calls
-                .antMatchers(HttpMethod.GET,serverContextPath + "/properties").permitAll() //allow properties search globally
-                .antMatchers(HttpMethod.POST, serverContextPath + "/users").permitAll() //allow user registration
-                //.antMatchers("/admin/**").hasRole("ADMIN")
-                //.antMatchers("/providers/**").hasRole("ADMIN")
-                //.antMatchers("/db/**").access("hasRole('ROLE_ADMIN') and hasRole('ROLE_DBA')")
-                //.anyRequest().authenticated();
-                .antMatchers("/users/**", serverContextPath + "/properties/**").access("hasRole('USER')")
-                .antMatchers("/properties/**").authenticated();
-//                .antMatchers("app/api/**").authenticated()
-//                .antMatchers("app/providers/api/**").authenticated();
+                .antMatchers("/authenticate*").permitAll() //Authentication
+                .antMatchers(HttpMethod.GET, "/properties").permitAll() // Properties Search
+                .antMatchers(HttpMethod.POST, "/users").permitAll() // User Registration
+                .antMatchers(HttpMethod.OPTIONS).permitAll() // OPTIONS for some JS frameworks
+                .antMatchers(HttpMethod.GET, "/account-verification/*").permitAll() // Account verification
+                .anyRequest().authenticated();
+        //TODO define advanced user access pattern with roles etc.
 
     }
+
+
 }

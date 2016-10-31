@@ -3,6 +3,7 @@ package com.ceitechs.service.apis.rest.controllers.tokens;
 import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.handler.ExceptionHandlerUtil;
 import com.ceitechs.service.apis.rest.resources.LoginResource;
+import com.ceitechs.service.apis.rest.resources.MessageResource;
 import com.ceitechs.service.apis.rest.resources.TokenResource;
 import com.ceitechs.service.apis.security.PangoUserDetails;
 import com.ceitechs.service.apis.security.TokenUtils;
@@ -69,7 +70,7 @@ public class PangoTokenController {
             String token = TokenUtils.createToken(userDetails);
             response = ResponseEntity.ok(new TokenResource(userDetails, token));
         } catch (Exception e) {
-            response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResource("Wrong userId or Password" ,e.getMessage()));
         }
 
         return response;

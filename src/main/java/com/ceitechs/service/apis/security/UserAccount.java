@@ -38,7 +38,7 @@ public class UserAccount implements PangoUserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return account.getProfile().isVerified();
     }
 
     @Override

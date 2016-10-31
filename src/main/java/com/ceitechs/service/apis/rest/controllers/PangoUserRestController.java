@@ -250,7 +250,7 @@ public class PangoUserRestController {
             userProjection = pangoDomainService.verifyUserAccountBy(confirmationToken);
             if (userProjection.isPresent()) {
                 logger.debug("User '" + userProjection.get().getEmailAddress() + "' verified successfully.");
-                return ResponseEntity.ok(new MessageResource("User verified., can now proceed to login  with userName : " + userProjection.get().getEmailAddress()));
+                return ResponseEntity.ok(new MessageResource("Proceed to login  with userName : " + userProjection.get().getEmailAddress(),"User account verified"));
             } else {
                 throw new Exception("User verification failed because of server error.");
             }

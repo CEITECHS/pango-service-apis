@@ -52,9 +52,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @Controller
 @SpringBootApplication(exclude = {
-        VelocityAutoConfiguration.class,
-        SecurityAutoConfiguration.class,
-        ManagementWebSecurityAutoConfiguration.class
+        VelocityAutoConfiguration.class
 })
 @EnablePangoDomainService
 @EnableAsync
