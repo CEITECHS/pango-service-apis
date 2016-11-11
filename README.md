@@ -1,7 +1,7 @@
 # pango-service-apis
 pango services endpoints
-- Run [config-server](https://github.com/CEITECHS/pango-config-server)
-- Run the service and point `GET http://localhost:8090/rentals` 
+- Run [config-server](https://github.com/CEITECHS/pango-config-server) or [docker](https://hub.docker.com/r/iamiddy/pango-config-server) 
+- Run the service or [docker](https://hub.docker.com/r/iamiddy/pango-service-apis/) and point `GET http://localhost:8090/rentals` 
 - Search for properties `GET /properties?latitude=-6.662951&longitude=39.166650&propertyPurpose=HOME&radius=50&minPrice=0 HTTP/1.1
                          Host: localhost:8090
                          Accept: application/json
