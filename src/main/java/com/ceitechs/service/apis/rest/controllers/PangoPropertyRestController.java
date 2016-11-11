@@ -180,7 +180,6 @@ public class PangoPropertyRestController {
                         HttpStatus.NOT_FOUND);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             return ExceptionHandlerUtil.handleException(HttpStatus.INTERNAL_SERVER_ERROR, null, ex);
         }
     }
