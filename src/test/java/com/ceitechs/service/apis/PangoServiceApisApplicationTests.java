@@ -1,5 +1,6 @@
 package com.ceitechs.service.apis;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -9,6 +10,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = PangoServiceApisApplication.class)
 @WebAppConfiguration
+@Ignore
 public class PangoServiceApisApplicationTests {
 
 	@Test
