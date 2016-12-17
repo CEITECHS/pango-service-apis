@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * @author iddymagohe on 10/30/16.
@@ -59,23 +60,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-            http.csrf().disable()
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf()
+                // we don't need CSRF because our token is invulnerable
+                .disable()
+                // don't create session
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
-                .addFilter(authTokenProcessingFilter)
                 .authorizeRequests()
-                .antMatchers("/authenticate*").permitAll() //Authentication
+                .antMatchers("/authenticate/**").permitAll() //Authentication
                 .antMatchers(HttpMethod.GET, "/properties").permitAll() // Properties Search
                 .antMatchers(HttpMethod.POST, "/users").permitAll() // User Registration
                 .antMatchers(HttpMethod.OPTIONS).permitAll() // OPTIONS for some JS frameworks
                 .antMatchers(HttpMethod.GET, "/account-verification/*").permitAll() // Account verification
                 .anyRequest().authenticated();
         //TODO define advanced user access pattern with roles etc.
+
+        httpSecurity.addFilterBefore(authTokenProcessingFilter, UsernamePasswordAuthenticationFilter.class);
+
+        httpSecurity.headers().cacheControl();
 
     }
 

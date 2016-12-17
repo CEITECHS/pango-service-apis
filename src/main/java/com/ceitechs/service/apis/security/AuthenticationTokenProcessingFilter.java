@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -24,6 +25,7 @@ import java.io.IOException;
 /**
  * @author iddymagohe on 10/30/16.
  * @since 1.0
+ * @implNote update on 12/16/16 to incorporate JWT.
  */
 @Component
 public class AuthenticationTokenProcessingFilter extends UsernamePasswordAuthenticationFilter {
@@ -62,18 +64,22 @@ public class AuthenticationTokenProcessingFilter extends UsernamePasswordAuthent
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpRequest = this.getAsHttpRequest(request);
+        try {
+            HttpServletRequest httpRequest = this.getAsHttpRequest(request);
 
-        String authToken = this.extractAuthTokenFromRequest(httpRequest);
-        String userName = TokenUtils.getUserNameFromToken(authToken);
+            String authToken = this.extractAuthTokenFromRequest(httpRequest);
+            String userName = TokenUtils.getUserNameFromToken(authToken);
 
-        if (userName != null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-            if (TokenUtils.validateToken(authToken, userDetails)) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails =  userDetailsService.loadUserByUsername(userName);
+                if (TokenUtils.validateToken(authToken, (PangoUserDetails)userDetails)) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
+        } catch (Exception ex) {
+            SecurityContextHolder.getContext().setAuthentication(null);
         }
         chain.doFilter(request, response);
     }
@@ -88,12 +94,9 @@ public class AuthenticationTokenProcessingFilter extends UsernamePasswordAuthent
 
     private String extractAuthTokenFromRequest(HttpServletRequest httpRequest) {
         /* Get token from header */
-        String authToken = httpRequest.getHeader("user-token");
+        String authToken = StringUtils.hasText(httpRequest.getHeader("Authorization")) ?
+                httpRequest.getHeader("Authorization") : httpRequest.getHeader("user-token");
 
-		/* If token not found get it from request parameter */
-        if (authToken == null) authToken = httpRequest.getParameter("user-token");
-
-        return authToken;
+        return authToken.startsWith("Bearer ") ? authToken.substring(7) : authToken;
     }
 }
-

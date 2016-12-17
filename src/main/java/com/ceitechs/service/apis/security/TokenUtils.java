@@ -1,10 +1,14 @@
 package com.ceitechs.service.apis.security;
 
+import com.ceitechs.domain.service.util.DateConvertUtility;
+import com.ceitechs.domain.service.util.Hex;
+import com.ceitechs.domain.service.util.JwtTokenUtil;
+import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.codec.Hex;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 
 /**
  * @author iddymagohe on 10/30/16.
@@ -12,38 +16,12 @@ import java.security.NoSuchAlgorithmException;
  */
 public class TokenUtils {
 
-    public static String createToken(UserDetails userDetails) {
-		/* Expires in one hour */
-        long expires = System.currentTimeMillis() + 1000L * 60 * 60;
-
-        StringBuilder tokenBuilder = new StringBuilder();
-        tokenBuilder.append(userDetails.getUsername());
-        tokenBuilder.append(":");
-        tokenBuilder.append(expires);
-        tokenBuilder.append(":");
-        tokenBuilder.append(TokenUtils.computeSignature(userDetails, expires));
-
-        return tokenBuilder.toString();
+    public static String createToken(PangoUserDetails userDetails) {
+        String audience = userDetails.getUsername().substring(userDetails.getUsername().indexOf("@"));
+        String compactJws = JwtTokenUtil.generateToken(userDetails.getUsername(),audience,userDetails.getVerificationCode());
+        return compactJws;
     }
 
-    public static String computeSignature(UserDetails userDetails, long expires) {
-        StringBuilder signatureBuilder = new StringBuilder();
-        signatureBuilder.append(userDetails.getUsername());
-        signatureBuilder.append(":");
-        signatureBuilder.append(expires);
-        signatureBuilder.append(":");
-        signatureBuilder.append(userDetails.getPassword());
-        signatureBuilder.append(":");
-
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("No MD5 algorithm available!");
-        }
-
-        return new String(Hex.encode(digest.digest(signatureBuilder.toString().getBytes())));
-    }
 
     public static String getUserNameFromToken(String authToken) {
         if (null == authToken) {
@@ -51,18 +29,27 @@ public class TokenUtils {
         }
 
         String[] parts = authToken.split(":");
-        return parts[0];
+        return new String(Hex.decode(parts[0]));
     }
 
-    public static boolean validateToken(String authToken,UserDetails userDetails) {
+    public static boolean validateToken(String authToken, PangoUserDetails userDetails) {
         String[] parts = authToken.split(":");
-        long expires = Long.parseLong(parts[1]);
-        String signature = parts[2];
+        String signature = parts[1];
+        return JwtTokenUtil.validateToken(signature, token -> {
+            final Claims claims = JwtTokenUtil.getClaimsFromToken(token, userDetails.getVerificationCode());
+            final String userName = (String) JwtTokenUtil.getSubjectFromClaims(claims);
+            final Date created = JwtTokenUtil.getCreatedDateFromClaims(claims);
 
-        if (expires < System.currentTimeMillis()) {
-            return false;
-        }
+            return (
+                    userDetails.getUsername().equals(userName)
+                            && !JwtTokenUtil.isTokenExpired(claims)
+                            && userDetails.getUsername().endsWith(JwtTokenUtil.getAudienceFromClaims(claims))
+                            && !isCreatedBeforeLastPasswordReset(created, DateConvertUtility.asUtilDate(userDetails.getLastChangedPasswordOn()))
+            );
+        });
+    }
 
-        return signature.equals(TokenUtils.computeSignature(userDetails,expires));
+    private static boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
+        return (lastPasswordReset != null && created.before(lastPasswordReset));
     }
 }

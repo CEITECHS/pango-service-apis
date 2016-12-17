@@ -18,6 +18,7 @@ import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -182,6 +183,7 @@ public class PangoUserRestController {
      * @return
      */
     @RequestMapping(value = "/users/{userReferenceId}/preferences", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserPreferences(@RequestHeader(value = "user-token") String userToken,
             @PathVariable String userReferenceId) {
         logger.info("getUserPreferences : User Reference Id : " + userReferenceId);
@@ -257,6 +259,7 @@ public class PangoUserRestController {
         } catch (IllegalStateException ise) {
             return ExceptionHandlerUtil.handleException(HttpStatus.BAD_REQUEST, null, ise);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return ExceptionHandlerUtil.handleException(HttpStatus.INTERNAL_SERVER_ERROR, null, ex);
         }
     }

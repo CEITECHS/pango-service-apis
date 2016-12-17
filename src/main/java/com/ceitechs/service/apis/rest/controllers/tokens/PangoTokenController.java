@@ -1,5 +1,6 @@
 package com.ceitechs.service.apis.rest.controllers.tokens;
 
+import com.ceitechs.domain.service.util.Hex;
 import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.handler.ExceptionHandlerUtil;
 import com.ceitechs.service.apis.rest.resources.LoginResource;
@@ -67,8 +68,9 @@ public class PangoTokenController {
 			 *
 			 */
             PangoUserDetails userDetails = (PangoUserDetails) userDetailsService.loadUserByUsername(loginResource.getEmailAddress());
+            String userPart = String.valueOf(Hex.encode(loginResource.getEmailAddress().getBytes()));
             String token = TokenUtils.createToken(userDetails);
-            response = ResponseEntity.ok(new TokenResource(userDetails, token));
+            response = ResponseEntity.ok(new TokenResource(userDetails, userPart + ":" + token));
         } catch (Exception e) {
             response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResource("Wrong userId or Password" ,e.getMessage()));
         }

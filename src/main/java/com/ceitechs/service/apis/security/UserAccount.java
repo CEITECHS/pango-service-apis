@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -69,5 +70,15 @@ public class UserAccount implements PangoUserDetails {
     @Override
     public String getUserReferenceId() {
         return account.getUserReferenceId();
+    }
+
+    @Override
+    public LocalDateTime getLastChangedPasswordOn() {
+        return account.getProfile().getPasswordChangeDate();
+    }
+
+    @Override
+    public String getVerificationCode() {
+        return account.getProfile().getVerificationCode();
     }
 }
