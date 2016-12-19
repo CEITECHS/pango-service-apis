@@ -1,8 +1,10 @@
 package com.ceitechs.service.apis.rest.resources;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
@@ -11,20 +13,22 @@ import java.io.File;
  */
 
 @Getter
+@Setter
 @ToString
 public class AttachmentResource {
 
     // parent-id to associate the attachment
     @Setter
-    private String referenceId;
+    private String attachmentReferenceId;
 
-    private String category;
+    private String attachmentCategory;
 
-    private String description;
+    private String attachmentDescription;
 
-    private Boolean thumbnail;
+    private Boolean isThumbnail;
 
-    private File attachment;
+    @JsonIgnore
+    private MultipartFile attachment;
 
     public enum attachmentCategoryType {
         PROPERTY,
@@ -47,10 +51,4 @@ public class AttachmentResource {
     }
 
 
-    public AttachmentResource(String category, String description, Boolean thumbnail, File attachment) {
-        this.category = category;
-        this.description = description;
-        this.thumbnail = thumbnail;
-        this.attachment = attachment;
-    }
 }

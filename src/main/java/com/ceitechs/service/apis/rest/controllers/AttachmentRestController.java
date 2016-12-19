@@ -5,15 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 
 /**
  * @author iddymagohe on 12/18/16.
@@ -28,15 +23,20 @@ public class AttachmentRestController {
     private ConversionService conversionService;
 
     @RequestMapping(value = "/{attachmentReferenceId}", method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> handleAttachmentUploads(@RequestHeader(value = "user-token") String userToken,
                                                      @RequestHeader String userReferenceId,
-                                                     @PathVariable String attachmentReferenceId,
-                                                     @RequestBody MultiValueMap params) {
+                                                     AttachmentResource attachmentResource,
+                                                     @RequestPart(name = "attachment") MultipartFile file) throws Exception {
         try {
 
-            AttachmentResource attachmentResource = conversionService.convert(params, AttachmentResource.class);
+
+            attachmentResource.setAttachment(file);
+            logger.info("size: - KB " + attachmentResource.getAttachment().getSize()/1024);
+            logger.info("type : -" + attachmentResource.getAttachment().getContentType());
+            logger.info("name : -" + attachmentResource.getAttachment().getName());
+            logger.info("Original : -" + attachmentResource.getAttachment().getOriginalFilename());
 
             return ResponseEntity.ok(attachmentResource);
 
@@ -45,6 +45,6 @@ public class AttachmentRestController {
 
         }
         logger.info("request received ...");
-        return ResponseEntity.ok(params);
+        return ResponseEntity.ok(attachmentResource);
     }
 }

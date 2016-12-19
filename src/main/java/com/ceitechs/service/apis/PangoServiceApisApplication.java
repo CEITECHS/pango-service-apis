@@ -1,24 +1,18 @@
 package com.ceitechs.service.apis;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.ceitechs.domain.autoconfigure.EnablePangoDomainService;
 import com.ceitechs.service.apis.converters.request.*;
 import com.ceitechs.service.apis.converters.response.*;
-import com.ceitechs.service.apis.rest.controllers.RequestResponseLogger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.autoconfigure.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
-
-import com.ceitechs.domain.autoconfigure.EnablePangoDomainService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -33,10 +27,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+import javax.servlet.MultipartConfigElement;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -45,7 +39,8 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @Controller
 @SpringBootApplication(exclude = {
-        VelocityAutoConfiguration.class
+        VelocityAutoConfiguration.class,
+        MultipartAutoConfiguration.class
 })
 @EnablePangoDomainService
 @EnableAsync
@@ -82,7 +77,6 @@ public class PangoServiceApisApplication {
         converters.add(new PropertyUnitEnquiryToEnquiryResource());
         converters.add(new CorrespondenceResourceToEnquiryCorrespondence());
         converters.add(new UserProjectionToProjectionResource());
-        converters.add(new MultiValueMapToAttachmentResource());
         return converters;
     }
 
@@ -110,6 +104,11 @@ public class PangoServiceApisApplication {
     }
 
     @Bean
+    public MultipartConfigElement multipartConfigElement(){
+        return  new MultipartConfigElement("");
+    }
+
+    @Bean
     public FilterRegistrationBean corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
@@ -127,5 +126,6 @@ public class PangoServiceApisApplication {
     @Bean public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
 
 }
