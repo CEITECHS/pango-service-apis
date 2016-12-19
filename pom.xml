@@ -58,6 +58,7 @@
             <artifactId>spring-security-config</artifactId>
         </dependency>
 
+
         <dependency>
             <groupId>com.ceitechs</groupId>
             <artifactId>pango-domain-starter</artifactId>

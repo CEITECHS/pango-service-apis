@@ -3,6 +3,7 @@ package com.ceitechs.service.apis;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.ceitechs.service.apis.converters.request.*;
 import com.ceitechs.service.apis.converters.response.*;
 import com.ceitechs.service.apis.rest.controllers.RequestResponseLogger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
 
 import com.ceitechs.domain.autoconfigure.EnablePangoDomainService;
-import com.ceitechs.service.apis.converters.request.CorrespondenceResourceToEnquiryCorrespondence;
-import com.ceitechs.service.apis.converters.request.EnquiryResourceToPropertyUnitEnquiry;
-import com.ceitechs.service.apis.converters.request.PropertyDetailResourceToPropertyUnit;
-import com.ceitechs.service.apis.converters.request.PropertySearchCriteriaResourceToPropertySearchCriteria;
-import com.ceitechs.service.apis.converters.request.ReviewResourceToReview;
-import com.ceitechs.service.apis.converters.request.UserPreferenceResourceToUserPreference;
-import com.ceitechs.service.apis.converters.request.UserProfileResourceToUserProfile;
-import com.ceitechs.service.apis.converters.request.UserResourceToUser;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -89,6 +82,7 @@ public class PangoServiceApisApplication {
         converters.add(new PropertyUnitEnquiryToEnquiryResource());
         converters.add(new CorrespondenceResourceToEnquiryCorrespondence());
         converters.add(new UserProjectionToProjectionResource());
+        converters.add(new MultiValueMapToAttachmentResource());
         return converters;
     }
 
