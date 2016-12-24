@@ -4,11 +4,9 @@ import com.ceitechs.domain.service.util.DateConvertUtility;
 import com.ceitechs.domain.service.util.Hex;
 import com.ceitechs.domain.service.util.JwtTokenUtil;
 import io.jsonwebtoken.Claims;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * @author iddymagohe on 10/30/16.
@@ -20,6 +18,21 @@ public class TokenUtils {
         String audience = userDetails.getUsername().substring(userDetails.getUsername().indexOf("@"));
         String compactJws = JwtTokenUtil.generateToken(userDetails.getUsername(),audience,userDetails.getVerificationCode());
         return compactJws;
+    }
+
+    public static Optional<String> resfreshedToken(String oldToken, PangoUserDetails userDetails) {
+        try {
+            String[] tokens = oldToken.split(":");
+            final Claims claims = JwtTokenUtil.getClaimsFromToken(tokens[1], userDetails.getVerificationCode());
+            if (JwtTokenUtil.isTokenRefreshable(claims, DateConvertUtility.asUtilDate(userDetails.getLastChangedPasswordOn()))) {
+                String newToken = JwtTokenUtil.refreshToken(tokens[1], userDetails.getVerificationCode());
+                return Optional.ofNullable(tokens[0] + ":" + newToken);
+            }
+
+        } catch (Exception ex) {  }
+
+        return Optional.empty();
+
     }
 
 

@@ -1,7 +1,6 @@
 package com.ceitechs.service.apis.rest.controllers.tokens;
 
 import com.ceitechs.domain.service.util.Hex;
-import com.ceitechs.domain.service.util.PangoUtility;
 import com.ceitechs.service.apis.handler.ExceptionHandlerUtil;
 import com.ceitechs.service.apis.rest.resources.LoginResource;
 import com.ceitechs.service.apis.rest.resources.MessageResource;
@@ -16,17 +15,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * @author iddymagohe on 10/30/16.
@@ -57,13 +52,13 @@ public class PangoTokenController {
         }
 
         ResponseEntity<?> response = null;
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginResource.getEmailAddress(),loginResource.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginResource.getEmailAddress(), loginResource.getPassword());
         try {
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
 			/*
-			 * Reload user as password of authentication principal will be null
+             * Reload user as password of authentication principal will be null
 			 * after authorization and password is needed for token generation
 			 *
 			 */
@@ -72,9 +67,27 @@ public class PangoTokenController {
             String token = TokenUtils.createToken(userDetails);
             response = ResponseEntity.ok(new TokenResource(userDetails, userPart + ":" + token));
         } catch (Exception e) {
-            response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResource("Wrong userId or Password" ,e.getMessage()));
+            response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResource("Wrong userId or Password", e.getMessage()));
         }
 
         return response;
     }
+
+    @RequestMapping(value = "/authenticate/refresh", method = RequestMethod.GET)
+    public ResponseEntity<?> refreshAndGetAuthenticationToken(@RequestHeader(value = "user-token") String userToken) {
+        ResponseEntity<?> response = null;
+        try {
+            String userName = TokenUtils.getUserNameFromToken(userToken);
+            PangoUserDetails userDetails = (PangoUserDetails) userDetailsService.loadUserByUsername(userName);
+            Optional<String> refreshedToken = TokenUtils.resfreshedToken(userToken, userDetails);
+
+            response = ResponseEntity.ok(new TokenResource(userDetails, refreshedToken.get()));
+        } catch (Exception ex) {
+            response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResource("You can not refresh this token, please login to get a new token", ex instanceof NoSuchElementException ? "Un-Authorized token" : ex.getMessage()));
+        }
+
+        return response;
+    }
+
+
 }
