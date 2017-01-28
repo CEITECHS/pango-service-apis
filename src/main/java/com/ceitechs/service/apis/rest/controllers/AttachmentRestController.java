@@ -19,19 +19,14 @@ public class AttachmentRestController {
 
     private static Logger logger = LoggerFactory.getLogger(AttachmentRestController.class);
 
-    @Autowired
-    private ConversionService conversionService;
-
     @RequestMapping(value = "/{attachmentReferenceId}", method = RequestMethod.POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> handleAttachmentUploads(@RequestHeader(value = "user-token") String userToken,
-                                                     @RequestHeader String userReferenceId,
                                                      AttachmentResource attachmentResource,
                                                      @RequestPart(name = "attachment") MultipartFile file) throws Exception {
         try {
-
-
+            //TODO use user-token to retrieve the user.
             attachmentResource.setAttachment(file);
             logger.info("size: - KB " + attachmentResource.getAttachment().getSize()/1024);
             logger.info("type : -" + attachmentResource.getAttachment().getContentType());

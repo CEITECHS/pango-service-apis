@@ -19,7 +19,7 @@ public class AttachmentResource {
 
     // parent-id to associate the attachment
     @Setter
-    private String attachmentReferenceId;
+    private String attachmentParentReferenceId;
 
     private String attachmentCategory;
 
