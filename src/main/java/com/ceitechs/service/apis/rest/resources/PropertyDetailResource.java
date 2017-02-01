@@ -44,7 +44,7 @@ public class PropertyDetailResource {
 
     private Attachment coverPhoto;
 
-    private List<Attachment> photoUrl;
+    private List<Attachment> photos;
 
     private double[] location;
 

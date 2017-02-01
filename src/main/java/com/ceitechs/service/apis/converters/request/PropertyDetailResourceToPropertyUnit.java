@@ -23,7 +23,7 @@ public class PropertyDetailResourceToPropertyUnit implements Converter<PropertyD
         PropertyUnit propertyUnit = new PropertyUnit();
         propertyUnit.setActive(source.isActive());
         propertyUnit.setAddress(source.getAddress());
-        propertyUnit.setAttachments(source.getPhotoUrl());
+        propertyUnit.setAttachments(source.getPhotos());
         propertyUnit.setAutoListInd(source.isAutoListInd());
         propertyUnit.setCoverPhoto(source.getCoverPhoto());
         propertyUnit.setCreatedDate(LocalDateTime.now());

@@ -17,7 +17,7 @@ public class PropertyUnitToPropertyDetailResource implements Converter<PropertyU
         PropertyDetailResource detailResource = new PropertyDetailResource();
         detailResource.setActive(source.isActive());
         detailResource.setAddress(source.getAddress());
-        detailResource.setPhotoUrl(source.getAttachments());
+        detailResource.setPhotos(source.getAttachments());
         detailResource.setAutoListInd(source.isAutoListInd());
         detailResource.setCoverPhoto(source.getCoverPhoto());
         detailResource.setPropertyFeature(source.getFeatures());
