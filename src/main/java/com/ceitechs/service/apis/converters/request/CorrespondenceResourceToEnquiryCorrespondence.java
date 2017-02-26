@@ -23,7 +23,7 @@ public class CorrespondenceResourceToEnquiryCorrespondence
         enquiryCorrespondence.setMessage(source.getMessage());
         enquiryCorrespondence.setOwner(source.isOwner());
         // Missing properties
-        enquiryCorrespondence.setAttachment(null);
+
         return enquiryCorrespondence;
     }
 }

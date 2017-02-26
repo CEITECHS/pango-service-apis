@@ -1,16 +1,14 @@
 package com.ceitechs.service.apis.rest.resources;
 
 import com.ceitechs.domain.service.domain.Address;
-import com.ceitechs.domain.service.domain.Attachment;
 import com.ceitechs.domain.service.domain.PropertyFeature;
 import com.ceitechs.domain.service.domain.PropertyRent;
-
+import com.ceitechs.domain.service.service.AttachmentProjection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -45,13 +43,15 @@ public class PropertyResource {
 
     private int reviewCount;
 
-    private Attachment coverPhoto;
+    private AttachmentProjection coverPhoto;
 
     private double distance;
 
     private Address address;
 
     private String ownerReferenceId;
+
+    private boolean verified;
 
     public void setAvailability(LocalDateTime date) {
         StringBuilder availableDateStr = new StringBuilder();

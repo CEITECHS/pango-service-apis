@@ -30,4 +30,6 @@ public class PropertyUnitEnquiryToEnquiryResource implements Converter<PropertyU
         enquiryResource.setCorrespondenceCount(0);
         return enquiryResource;
     }
+
+    //TODO Missing UnitEnquiry to EnquiryDetails
 }

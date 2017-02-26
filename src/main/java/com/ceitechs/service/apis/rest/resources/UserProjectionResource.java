@@ -1,15 +1,10 @@
 package com.ceitechs.service.apis.rest.resources;
 
 import com.ceitechs.domain.service.domain.Address;
-import com.ceitechs.domain.service.domain.Attachment;
+import com.ceitechs.domain.service.service.AttachmentProjection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * @author iddymagohe on 10/27/16.
@@ -34,7 +29,7 @@ public class UserProjectionResource {
 
     private String joinDate;
 
-    private Attachment profilePicture;
+    private AttachmentProjection profilePicture;
 
     private Address address;
 

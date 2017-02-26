@@ -17,11 +17,6 @@ public class UserProfileResourceToUserProfile implements Converter<UserProfileRe
     public UserProfile convert(UserProfileResource userProfileResource) {
         UserProfile userProfile = new UserProfile();
         userProfile.setPassword(userProfileResource.getNewPassword());
-        // Create a new Attachment
-        Attachment attachment = new Attachment();
-        attachment.setProfilePicture(true);
-        attachment.setContentBase64(userProfileResource.getProfilePic());
-        userProfile.setProfilePicture(attachment);
         return userProfile;
     }
 }

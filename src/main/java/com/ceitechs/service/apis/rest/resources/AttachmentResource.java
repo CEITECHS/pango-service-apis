@@ -1,9 +1,11 @@
 package com.ceitechs.service.apis.rest.resources;
 
+import com.ceitechs.service.apis.rest.resources.validators.StringEnumValidator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -19,8 +21,10 @@ public class AttachmentResource {
 
     // parent-id to associate the attachment
     @Setter
+    @NotEmpty(message = "Attachment parent referenceId  can not be null or empty")
     private String attachmentParentReferenceId;
 
+    @StringEnumValidator(enumClass = attachmentCategoryType.class, message = "Unsupported attachment category")
     private String attachmentCategory;
 
     private String attachmentDescription;
@@ -33,7 +37,8 @@ public class AttachmentResource {
     public enum attachmentCategoryType {
         PROPERTY,
         PROFILE_PICTURE,
-        CORRESPONDENCE
+        CORRESPONDENCE,
+        OTHER
     }
 
     public enum requestFields {

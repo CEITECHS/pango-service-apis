@@ -26,8 +26,6 @@ public class CorrespondenceResource {
     @NotNull
     private String message;
 
-    private Attachment attachment;
-
     private LocalDateTime correspondenceDate = LocalDateTime.now(Clock.systemUTC());
 
     @NotNull

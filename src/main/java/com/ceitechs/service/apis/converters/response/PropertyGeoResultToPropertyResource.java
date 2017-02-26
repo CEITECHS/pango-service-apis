@@ -22,15 +22,14 @@ public class PropertyGeoResultToPropertyResource implements Converter<GeoResult<
         propertyResource.setListingFor(propertyUnit.getListingFor().name());
         propertyResource.setOwnerReferenceId(propertyUnit.getOwner().getUserReferenceId());
         propertyResource.setPropertyReferenceId(propertyUnit.getPropertyId());
-        propertyResource.setPropertyDescription(propertyUnit.getPropertyUnitDesc());
         propertyResource.setPropertyFeature(propertyUnit.getFeatures());
         propertyResource.setPropertyRent(propertyUnit.getRent());
         propertyResource.setPropertyUnitId(propertyUnit.getUnitNumber());
         propertyResource.setRating(propertyUnit.getPropertyRating());
-
         // Missing properties
         propertyResource.setAvailability(propertyUnit.getNextAvailableDate());
         propertyResource.setReviewCount(0);
+        propertyResource.setVerified(propertyUnit.isVerified());
         return propertyResource;
     }
 }

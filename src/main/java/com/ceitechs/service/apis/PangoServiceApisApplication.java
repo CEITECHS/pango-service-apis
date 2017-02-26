@@ -77,6 +77,7 @@ public class PangoServiceApisApplication {
         converters.add(new PropertyUnitEnquiryToEnquiryResource());
         converters.add(new CorrespondenceResourceToEnquiryCorrespondence());
         converters.add(new UserProjectionToProjectionResource());
+        converters.add(new AttachmentResourceToAttachment());
         return converters;
     }
 
