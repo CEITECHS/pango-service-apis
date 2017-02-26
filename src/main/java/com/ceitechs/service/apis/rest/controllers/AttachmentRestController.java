@@ -58,11 +58,27 @@ public class AttachmentRestController {
             User user = domainService.retrieveVerifiedUserByUsername(userName);
             Attachment attachment = conversionService.convert(attachmentResource, Attachment.class);
             Optional<Attachment> attachmentOptional = domainService.saveAttachment(user, attachment);
-            if (!attachmentOptional.isPresent()) throw new Exception("Failed to save an attachment");
             return ResponseEntity.ok((AttachmentProjection) attachmentOptional.get());
 
         } catch (Exception ex) {
-            return ExceptionHandlerUtil.handleException(HttpStatus.INTERNAL_SERVER_ERROR, null, new Exception(ex.getMessage(), ex.getCause()));
+            return ExceptionHandlerUtil.handleException(ex instanceof  IllegalArgumentException ? HttpStatus.BAD_REQUEST: HttpStatus.INTERNAL_SERVER_ERROR, null, new Exception(ex.getMessage(), ex.getCause()));
+        }
+
+    }
+
+
+    @RequestMapping(value = "/{attachmentParentReferenceId}", method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteAttachment(@RequestHeader(value = "user-token") String userToken,@PathVariable(name = "attachmentParentReferenceId") String attachmentReferenceId) {
+
+        try {
+            String userName = TokenUtils.getUserNameFromToken(userToken);
+            User user = domainService.retrieveVerifiedUserByUsername(userName);
+            Optional<Attachment> attachmentOptional = domainService.deleteAttachment(user,attachmentReferenceId);
+            return ResponseEntity.ok((AttachmentProjection) attachmentOptional.get());
+
+        } catch (Exception ex) {
+            return ExceptionHandlerUtil.handleException(ex instanceof  IllegalArgumentException ? HttpStatus.BAD_REQUEST:HttpStatus.INTERNAL_SERVER_ERROR, null, new Exception(ex.getMessage(), ex.getCause()));
         }
 
     }

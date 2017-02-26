@@ -24,7 +24,7 @@ public class AttachmentResource {
     @NotEmpty(message = "Attachment parent referenceId  can not be null or empty")
     private String attachmentParentReferenceId;
 
-    @StringEnumValidator(enumClass = attachmentCategoryType.class, message = "Unsupported attachment category")
+    @StringEnumValidator(enumClass = attachmentCategoryType.class, message = "Missing or Unsupported attachment category")
     private String attachmentCategory;
 
     private String attachmentDescription;
