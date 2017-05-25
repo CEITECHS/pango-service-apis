@@ -101,7 +101,9 @@ public class PangoPropertyRestController {
         logger.info("createProperty : Request Params : " + propertyDetailResource);
         PropertyUnit propertyUnit = conversionService.convert(propertyDetailResource, PropertyUnit.class);
         logger.info("Converted Property Unit : " + propertyUnit);
-        pangoDomainService.createProperty(propertyUnit, null);
+        User user = new User();
+        user.setUserReferenceId(userReferenceId);
+        pangoDomainService.createProperty(propertyUnit, user);
         return new ResponseEntity<>("Ok, successfully created a new Property", HttpStatus.CREATED);
     }
 
